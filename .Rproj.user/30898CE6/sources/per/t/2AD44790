@@ -1,0 +1,31 @@
+{
+    "id": "2AD44790",
+    "path": "~/Library/CloudStorage/OneDrive-Personal/Jupyter WorkPlace/DSCI551/DSCI_551_lab2_osas42/lab2.Rmd",
+    "project_path": null,
+    "type": "r_markdown",
+    "hash": "1170123731",
+    "contents": "",
+    "dirty": false,
+    "created": 1788885131661.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "rmdVisualMode": "true",
+        "rmdVisualWrapConfigured": "true",
+        "docOutlineVisible": "1",
+        "cursorPosition": "0,0",
+        "scrollLine": "0",
+        "rmdVisualModeLocation": "208:244",
+        "rmdVisualCollapsedChunks": ""
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1788885153,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1788885153410,
+    "read_only": false,
+    "read_only_alternatives": []
+}

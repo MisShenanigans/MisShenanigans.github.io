@@ -1,0 +1,1062 @@
+---
+title: "DSCI 551 Lab 2"
+subtitle: Joint and Conditional Probabilities
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\newpage
+
+# Lab Overview
+
+This lab focuses on **joint probability**, **conditional probability**, and **relationships between random variables**. You will practice working with joint and marginal distributions, computing probabilities under conditioning, and distinguishing statistical independence from lack of correlation. You will also work with **random variable transformations**, expected values, variances, covariances, sums of random variables, and measures of dependence such as **Pearson's correlation and Kendall's** $\tau_K$. Finally, you will examine how conditioning changes a probability distribution and how **conditional independence** can be interpreted in practice. Throughout the lab, you will connect these ideas to concrete probability models and strengthen your ability to reason about multiple random variables together.
+
+# Lab Mechanics
+
+`rubric={mechanics:5}`
+
+Check off that you have read and followed each of these instructions:
+
+- [ ] You need to have **a minimum of 3 commit messages** associated with your `GitHub.ubc.ca` repository for this lab.
+- [ ] All files necessary to run your work must be pushed to your `GitHub.ubc.ca` repository for this lab.
+- [ ] Paste the URL to your GitHub repo here: **INSERT YOUR GITHUB REPO URL HERE**
+- [ ] **You must also submit the `.Rmd` file and the rendered `.pdf` to Gradescope.** You are responsible for ensuring that all figures, text, and equations in the `.pdf` file are rendered correctly.
+- [ ] To ensure **you do not break the autograder** remove all code for installing packages (i.e., **do not have** `install.packages(...)` or `devtools::install_github(...)` in your homework!)
+- [ ] Follow the [**MDS general lab instructions**](https://ubc-mds.github.io/resources_pages/general_lab_instructions/).
+
+All standard rubrics in this lab follow the MDS rubrics that can be found [**here**](https://github.com/UBC-MDS/public/tree/master/rubric).
+
+# Use of Generative AI (GenAI)
+
+Generative AI tools (e.g., ChatGPT) **may be used in this lab to support your learning and work**. For example, you may use them to review concepts, brainstorm approaches, troubleshoot code, or help you think through a problem. However, **you remain responsible for everything you submit**. Your answers, code, reasoning, and interpretations should reflect your own understanding, and you should be able to explain how and why they work. The teaching team may ask you to explain, reproduce, justify, or extend any part of your submitted work.
+
+Hence, GenAI should be used as a **support for your learning rather than a substitute for understanding the material**. In particular, do not rely on generated answers that you cannot independently verify or explain. Also, **do not provide confidential or sensitive information to GenAI tools**, including personal student information or assessment materials that should not be shared (course materials are copyrighted and should not be shared outside the permitted course context).
+
+Any additional restrictions or disclosure requirements for a particular assessment will be stated explicitly in its instructions. Please review the [**MDS policies**](https://ubc-mds.github.io/policies/) and [**UBC guidance on generative AI**](https://academicintegrity.ubc.ca/generative-ai/) for further details.
+
+# A Note on Challenging Questions
+
+Each lab will include a small number of **challenging questions**. These are intentionally low-stakes and together account for **5% of the total lab grade**. Their purpose is to give you an opportunity to explore selected ideas in greater depth and to demonstrate stronger analytical and critical reasoning. When working through the lab, complete the regular questions first and return to the challenging questions afterward. If you are running short on time, you should prioritize the regular questions.
+
+Challenging questions will be marked more strictly than the rest of the lab. To receive full marks, your response should:
+
+- be thorough, thoughtful, and clearly written, when written justification is required;
+- provide convincing reasoning and appropriate evidence for the claims you make; and
+- demonstrate a strong understanding of the relevant concepts, including your ability to reason independently and make well-justified connections.
+
+# Lab Grade Computation
+
+Once your lab has been graded in **Gradescope**, you will see a **raw lab mark**, denoted by $m$. This is the total number of marks you earned across all graded components of the lab.
+
+We define two reference totals:
+
+- $m_{100}$: the **maximum raw mark**, obtained by adding all marks available in the lab, including both regular and challenging questions.
+- $m_{95}$: the raw mark corresponding to **95%**, obtained by adding only the marks available from the regular, non-challenging questions.
+
+In other words, completing all regular questions correctly is sufficient to earn **95%**. The challenging questions provide the remaining opportunity to increase your grade from 95% up to 100%.
+
+That said, at the end of the block, once grading for all labs is complete in **Gradescope**, the raw lab marks will be transferred to **Canvas**. In your [Canvas gradebook](https://canvas.ubc.ca/courses/192017/grades), you will see both:
+
+- the raw marks (`raw lab1`, `raw lab2`, `raw lab3`, and `raw lab4`), and
+- the corresponding final percentage grades (`lab1`, `lab2`, `lab3`, and `lab4`).
+
+Let $g$ denote the final percentage grade for a particular lab. It is computed as follows:
+
+- If $m > m_{95}$,
+
+$$g = 95 + \left( \frac{m - m_{95}}{m_{100} - m_{95}} \times 5 \right).$$
+
+- If $m \leq m_{95}$,
+
+$$g = \left( \frac{m}{m_{95}} \right) \times 95.$$
+
+# Recommended Workflow: RStudio and `R` Markdown
+
+Since this is **Block 1**, many of you are just beginning to explore different tools and workflows for data science, such as **RStudio**, **Jupyter Notebook**, and other development environments. This is a great time to experiment and start discovering which tools work well for you!
+
+For DSCI 551 labs, however, we **recommend using RStudio with the provided `R` Markdown (`.Rmd`) files**. This is the workflow that the teaching team uses to develop and test the labs, so it is also the environment in which we can most easily help you troubleshoot problems. Our main goal is for you to spend your time **learning and practicing probability**, rather than debugging differences between software environments.
+
+## Why We Recommend RStudio
+
+Using RStudio with the provided `.Rmd` files makes it easier to:
+
+- run the lab in the same environment in which it was developed and tested;
+- keep your code, written responses, equations, and figures together in one document;
+- render your work **directly** to the required `.pdf` format;
+- identify coding or rendering problems when they arise; and
+- receive troubleshooting support from the teaching team.
+
+You are welcome to explore Jupyter Notebook or other tools as part of your learning. However, the teaching team will be best equipped to help with issues that arise in the **RStudio + `R` Markdown workflow**.
+
+## If You Prefer Another Environment
+
+If you choose to do some of your work in Jupyter Notebook or another environment, that is okay. Just keep in mind that the lab is distributed and graded using an `.Rmd` workflow. That said, before submitting, make sure that:
+
+- your completed work is contained in the provided `.Rmd` file;
+- the `.Rmd` file runs and knits successfully;
+- the rendered `.pdf` contains all required answers, code, figures, and mathematical expressions; and
+- the files you submit to Gradescope are the final versions you intended to submit.
+
+The teaching team can only grade what appears correctly in your submitted files, so it is important to check the rendered `.pdf` before submitting.
+
+## A Practical Suggestion
+
+**Knit your lab regularly while you work**, rather than waiting until the end. This makes it much easier to identify where a problem was introduced and usually prevents last-minute rendering issues.
+
+Especially during Block 1, do not hesitate to ask the teaching team for help getting familiar with the workflow. Once the technical setup becomes routine, we can spend our time on what matters most in this course: **reasoning about probability and uncertainty**.
+
+## Tool-related Issues and Submission Deadlines
+
+Starting early and checking that your `.Rmd` knits successfully will help prevent last-minute technical problems. If you encounter an issue, please seek help as early as possible. Standard submission deadlines and late policies still apply according to the [**MDS policies**](https://ubc-mds.github.io/policies/), unless an applicable academic concession is granted.
+
+# No Disclosure of Lab and Quiz Grade Summaries
+
+In DSCI 551, the teaching team **does not provide class-level summaries of lab or quiz grades**. This includes averages, medians, quartiles, score ranges, grade distributions, percentiles, rankings, or similar comparisons across the cohort.
+
+We understand that, especially at the beginning of the program, it can be tempting to compare your performance with that of the rest of the class. However, these comparisons are not always helpful for understanding what you have learned or what you should work on next. Instead, we encourage you to focus on **your own performance, feedback, and progress toward the course learning goals**.
+
+To help you understand how you are doing, you will have access to:
+
+- your **individual lab and quiz grades**, along with feedback when applicable;
+- **lab solution keys** after the corresponding submission deadlines;
+- **quiz solutions** during the corresponding review windows at the **Open Resource Centre for Assessments (ORCA)**;
+- opportunities to discuss your mistakes and questions with the instructors through a previously booked appointment; and
+- the standard process for requesting regrades according to the [**MDS policies**](https://ubc-mds.github.io/policies/).
+
+If you are unsure about your performance, we are happy to help you interpret your own results and identify concepts or skills that may need additional practice. **What we will not do is provide or reconstruct statistics describing how the rest of the class performed.**
+
+> **Note:** This approach will be applied consistently to all students and to all DSCI 551 labs and quizzes.
+
+# A Note on Warmup Exercises
+
+Each lab session will begin with a short **warmup exercise**, clearly identified in the handout. We will work through this exercise together during approximately the **first 20 minutes of the lab**. The purpose of the warmup is to help you transition from lecture material into active problem solving. These questions are designed to:
+
+- reactivate important concepts from the corresponding lectures;
+- give you an opportunity to practice the mathematical and probabilistic reasoning you will need later in the lab;
+- surface common misunderstandings before you begin the graded exercises; and
+- model useful ways of setting up and communicating a solution.
+
+Because we solve the warmup together, you are encouraged to **attempt the question before the solution is discussed**, even if you are unsure how to proceed. The goal is not to get everything correct immediately, but to engage with the problem and compare your reasoning with the approach developed during the lab session.
+
+The warmup may also introduce techniques, notation, or problem-solving strategies that will be useful in the graded portion of the lab. For that reason, we strongly recommend participating actively rather than treating it as optional background material.
+
+> **Note:** Warmup exercises are **not graded** and do not contribute to the 100% available for the lab. They are included purely as a learning and preparation activity.
+
+# A Note on Mathematical Writing and LaTeX
+
+Throughout DSCI 551, you will frequently need to show mathematical reasoning, calculations, and probability notation. **You are not expected to know LaTeX in order to do well in this course.**
+
+LaTeX is a useful tool for typesetting mathematics, and you are welcome to use it if you are already comfortable with it or would like to explore it at your own pace. However, **learning or mastering LaTeX is not a learning goal of DSCI 551**, and the quality of your mathematical typesetting will not determine whether you understand probability.
+
+Especially during **Block 1**, there are many new tools, workflows, and conventions to become familiar with in MDS. We would much rather have you spend your time thinking carefully about **probability, mathematical reasoning, and how to communicate your solution clearly** than worrying about producing perfectly typeset equations.
+
+For questions that ask you to show your reasoning, you may therefore use any of the following approaches:
+
+- write your mathematics using LaTeX if you are comfortable doing so; or
+- **work out your solution by hand, take a clear picture of your work, and embed that image directly into your `.Rmd` file**.
+
+Both approaches are acceptable. **There is no grading advantage to using LaTeX instead of a clear handwritten solution.**
+
+If you choose to submit handwritten mathematical work, please make sure that:
+
+- your writing is clearly legible;
+- the image is sufficiently large and sharp to read;
+- the image is oriented correctly and reasonably cropped;
+- the image file is included in your lab repository (i.e., inside the provided `img` folder in your GitHub repo); and
+- the image renders correctly in the final `.pdf` that you submit to Gradescope.
+
+For example, an image stored as `img/my_answer_2_1.jpg` can be embedded in your R Markdown file using:
+
+![My solution](img/my_answer_example.jpg)
+
+Always **knit your `.Rmd` and inspect the resulting `.pdf`** before submitting. An image stored on your computer but not included correctly in the repository may appear while you are working locally but fail to render elsewhere.
+
+> **Important:** Please do not feel that you need to learn LaTeX specifically for this course, particularly during Block 1. If you already know it, feel free to use it. If you do not, a clear handwritten solution is completely appropriate. What we are assessing is **your probabilistic reasoning and understanding**, not your ability to typeset mathematics.
+
+# Average Completion Time Estimates
+
+Below are **average completion time estimates** for each exercise. These estimates are meant to help you pace your work, not to rush you. Think of them as a small **navigation tool** while you work through the lab. If an exercise takes you longer than the estimate, that is completely okay.
+
+| Exercise | Main focus | Approximate time |
+|:--:|:--:|:--:|
+| **Warmup Exercise 1** | Joint, marginal, and conditional probabilities | **20 minutes** during the lab session |
+| **Exercise 2** | Joint distributions, events, marginalization, and independence | **50 minutes** |
+| **Exercise 3** | Independence, covariance, transformations, Pearson's correlation, and Kendall's $\tau_K$ | **55 minutes** |
+| **Exercise 4** | Univariate conditioning, conditional distributions, expected value, variance, and entropy | **40 minutes** |
+| **Exercise 5.1** | Sums of random variables and multivariate conditioning | **40 minutes** |
+| **Exercise 6** | Conditional independence and conceptual interpretation | **15 minutes** |
+
+The **regular graded portion** of the lab should therefore take approximately **3 hours and 20 minutes**, in addition to the warmup completed during the lab session.
+
+The following questions are marked as **challenging** and should be attempted only after completing the regular questions:
+
+|  Challenging component   | Approximate additional time |
+|:------------------------:|:---------------------------:|
+|    **Exercise 5.1.6**    |       **15 minutes**        |
+| **Exercise 5.2.1–5.2.3** |       **35 minutes**        |
+
+Altogether, the challenging questions should require approximately **50 additional minutes**.
+
+> **Planning suggestion:** Complete the regular questions first. If you are running short on time, submit a complete and carefully checked regular portion before returning to the challenging questions.
+
+These estimates focus on the mathematical and probabilistic work. You may need some additional time to knit your `.Rmd`, check the rendered `.pdf`, and resolve any submission or formatting issues.
+
+\newpage
+
+# (Warmup) Exercise 1: Promotions and Car-Share Bookings
+
+A car-sharing company in Vancouver is experimenting with short promotional campaigns. For a randomly selected hour, let
+
+- $X$ be the number of promotional messages displayed in the company's app, where $X = 0, 1, 2,$ or $3$; and
+- $Y$ be the number of new car-share bookings made during that hour, where $Y = 0, 1,$ or $2$.
+
+Suppose the joint probability distribution of $X$ and $Y$ is:
+
+|         | $Y = 0$ | $Y = 1$ | $Y = 2$ |
+|:-------:|:-------:|:-------:|:-------:|
+| $X = 0$ | $0.15$  | $0.08$  | $0.07$  |
+| $X = 1$ | $0.10$  | $0.10$  | $0.05$  |
+| $X = 2$ | $0.04$  | $0.10$  | $0.11$  |
+| $X = 3$ | $0.02$  | $0.03$  | $0.15$  |
+
+We will use this table to practice moving between **joint**, **marginal**, and **conditional** probabilities.
+
+> **Warmup strategy:** Before doing any arithmetic, identify which **cell, row, column, or collection of cells** in the table corresponds to the event in each question.
+
+Answer the following questions:
+
+**1.1.** Suppose no promotional messages are displayed during an hour. What is the joint probability that exactly two bookings are made during that same hour?
+
+**1.2.** What is the probability that either no promotional messages are displayed or exactly two bookings are made?
+
+> **Heads-up:** The word **or** is inclusive here. The event includes hours satisfying either condition as well as hours satisfying both.
+
+**1.3.** Suppose you are told that no promotional messages were displayed during the hour. Given this information, what is the probability that exactly two bookings were made?
+
+**1.4.** Now suppose you are told that at least one promotional message was displayed. Given this information, what is the probability that exactly two bookings were made?
+
+**1.5.** Compare your answers to **1.3** and **1.4**. In one or two sentences, describe what changes when we condition on $X = 0$ versus $X \geq 1$. Focus on how conditioning changes the set of outcomes that we are considering.
+
+**ANSWERS:**
+
+*Type your answers here, replacing this text.*
+
+\newpage
+
+# Exercise 2: Two Ways to Order at a Vancouver Food Truck
+
+`rubric={autograde:7,reasoning:16}`
+
+A Vancouver food truck receives orders through two channels during a busy lunch period: customers can order **at the truck** or through a **mobile ordering app**. For a randomly selected five-minute interval, let
+
+- $X$ be the number of walk-up orders, where $X = 0, 1,$ or $2$; and
+- $Y$ be the number of mobile-app orders, where $Y = 0, 1, 2, 3,$ or $4$.
+
+Suppose the joint probability distribution of $X$ and $Y$ is:
+
+|         | $Y = 0$ | $Y = 1$ | $Y = 2$ | $Y = 3$ | $Y = 4$ |
+|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|
+| $X = 0$ | $0.10$  | $0.14$  | $0.08$  | $0.06$  | $0.02$  |
+| $X = 1$ | $0.12$  | $0.10$  | $0.07$  | $0.03$  | $0.03$  |
+| $X = 2$ | $0.08$  | $0.09$  | $0.05$  | $0.02$  | $0.01$  |
+
+Each cell gives a **joint probability**. For example,
+
+$$P(X=1 \cap Y=2)=0.07$$
+
+means that the probability of observing exactly one walk-up order **and** exactly two mobile-app orders in a randomly selected five-minute interval is $0.07$.
+
+> **A useful joint-table workflow:** For each question below, first translate the event into words, then identify the relevant **cell, row, column, or collection of cells**, and only then carry out the required probability calculation.
+
+## Reading and Combining Events
+
+**2.1.** Find
+
+$$P(X=0),$$
+
+the **marginal probability** that there are no walk-up orders during the five-minute interval.
+
+> **Hint:** A marginal probability for $X$ requires accounting for every possible value of $Y$ that can occur together with the specified value of $X$.
+
+**2.2.** Find
+
+$$P(X=0 \cap Y=0),$$
+
+the probability that there are no walk-up orders **and** no mobile-app orders.
+
+**2.3.** Find
+
+$$P(X=0 \cup Y=0),$$
+
+the probability that there are no walk-up orders **or** no mobile-app orders.
+
+> **Heads-up:** As in the warmup, **or** is inclusive.
+
+## Conditioning on Information
+
+**2.4.** Suppose you are told that there were no mobile-app orders during the five-minute interval. Given this information, what is the probability that there were also no walk-up orders? In other words, find
+
+$$P(X=0 \mid Y=0).$$
+
+> **Conditioning strategy:** Once we know that $Y=0$, outcomes for which $Y\neq0$ are no longer part of the probability space under consideration. Identify the relevant column before computing the conditional probability.
+
+## Events Defined by Relationships Between Two Random Variables
+
+The next three questions describe events using a relationship between $X$ and $Y$. Before adding any probabilities, identify **all pairs** $(x,y)$ in the table that satisfy the stated relationship.
+
+**2.5.** Find
+
+$$P(X=Y),$$
+
+the probability that the number of walk-up orders is exactly equal to the number of mobile-app orders.
+
+**2.6.** Find
+
+$$P(X\geq Y),$$
+
+the probability that the number of walk-up orders is at least as large as the number of mobile-app orders.
+
+**2.7.** Let
+
+$$T=X+Y$$
+
+denote the **total number of orders** received during the five-minute interval. Find
+
+$$P(T\geq5)
+=
+P(X+Y\geq5),$$
+
+the probability that at least five total orders are received.
+
+> **Hint:** List the possible pairs $(x,y)$ satisfying $x+y\geq5$ before summing their joint probabilities.
+
+## Constructing a Marginal Distribution
+
+**2.8. (Non-autograded)** Find the complete **marginal distribution of** $Y$ by filling in the table below.
+
+| $y$ | $P(Y=y)$ |
+|:---:|:--------:|
+| $0$ |          |
+| $1$ |          |
+| $2$ |          |
+| $3$ |          |
+| $4$ |          |
+
+For each value of $y$, your answer should account for all possible values of $X$ that can occur together with that value of $Y$.
+
+## Checking Independence
+
+**2.9. (Non-autograded)** Are $X$ and $Y$ independent?
+
+Support your answer in **two or three sentences** using the probability definition of independence. You do not need to check every cell of the table: one pair of events for which the required equality fails is sufficient to establish that $X$ and $Y$ are not independent.
+
+> **Recall:** If $X$ and $Y$ are independent, then for every possible pair $(x,y)$, $$P(X=x \cap Y=y)
+> =
+> P(X=x) \times P(Y=y).$$
+
+## What You Need to Submit for Exercise 2
+
+For the **`reasoning` component**, show enough intermediate work for us to understand how you identified the relevant probabilities and obtained your answers. In particular:
+
+- for **2.1**, show how you obtain the requested marginal probability from the joint table;
+- for **2.2**, identify the relevant joint-probability cell;
+- for **2.3**, show how you account for the overlap between the two events;
+- for **2.4**, show how the conditioning information changes the probability calculation;
+- for **2.5, 2.6 and 2.7**, clearly identify the cells or $(x,y)$ pairs satisfying each event before summing their probabilities;
+- for **2.8** complete the marginal-distribution table; and
+- for **2.9**, provide the requested independence check using probabilities from the table.
+
+As discussed earlier in the lab, you do not need to use LaTeX for your mathematical work. You may write your reasoning by hand, take a clear picture, save it inside the `img` folder of your lab repository, and embed it in your `.Rmd` file. For example:
+
+![My solution to Exercise 2](img/my_answer_2.jpg)
+
+For the **`autograde` component**, assign your final numeric answers for **2.1 to 2.7** to:
+
+- `answer2_1`
+- `answer2_2`
+- `answer2_3`
+- `answer2_4`
+- `answer2_5`
+- `answer2_6`
+- `answer2_7`
+
+You may perform the corresponding computation directly when assigning each object. Then, run the provided tests to check your final values.
+
+> **Heads-up:** A successful test confirms the corresponding **`autograde` answer only**. Your intermediate work and explanations will be assessed separately for the `reasoning` rubric.
+
+**ANSWERS:**
+
+*Type your answers here, replacing this text, if you are not providing a handwritten solution.*
+
+```{r}
+answer2_1 <- NULL
+answer2_2 <- NULL
+answer2_3 <- NULL
+answer2_4 <- NULL
+answer2_5 <- NULL
+answer2_6 <- NULL
+answer2_7 <- NULL
+
+# YOUR CODE HERE
+```
+
+```{r}
+. = ottr::check("tests/Q2.R")
+```
+
+\newpage
+
+# Exercise 3: Independence, Random Variable Transformations, and Measures of Dependence
+
+In this exercise, we will connect three ideas from:
+
+1.  **independence** of random variables;
+2.  **random variable transformations**; and
+3.  different ways of measuring dependence.
+
+Recall that **two random variables** $A$ and $B$ are independent if
+
+$$P(A=a \cap B=b)
+=
+P(A=a)\times P(B=b)$$
+
+for every possible pair $(a,b)$.
+
+Also recall that covariance is defined as
+
+$$\operatorname{Cov}(A,B)
+=
+\mathbb{E}(AB)
+-
+\mathbb{E}(A)\mathbb{E}(B).$$
+
+Covariance, and its standardized version Pearson's correlation, describe **linear dependence**. In particular, zero covariance indicates no linear trend, but it does **not** necessarily imply independence.
+
+Kendall's $\tau_K$ measures a different type of dependence: **monotonic dependence**. For a sample of $n$ pairs with no ties,
+
+$$\tau_K
+=
+\frac{
+\text{number of concordant pairs}
+-
+\text{number of discordant pairs}
+}{
+\binom{n}{2}
+}.$$
+
+> **Heads-up:** Neither zero covariance nor Kendall's $\tau_K=0$ should automatically be interpreted as independence. These measures summarize particular kinds of dependence; **independence is a stronger property of the full joint distribution**.
+
+## 3.1. A Random Variable Transformation with Zero Covariance
+
+`rubric={reasoning:6}`
+
+Let $X$ have the following probability mass function (PMF):
+
+|   $x$    | $-1$  |  $0$  |  $1$  |
+|:--------:|:-----:|:-----:|:-----:|
+| $P(X=x)$ | $1/3$ | $1/3$ | $1/3$ |
+
+Now define a new random variable
+
+$$Y=X^2.$$
+
+This is a **random variable transformation**: we start with the random variable $X$ and apply the function
+
+$$g(x)=x^2$$
+
+to each possible outcome, producing the transformed random variable
+
+$$Y=g(X).$$
+
+Thus,
+
+| $X$  | $Y=X^2$ |
+|:----:|:-------:|
+| $-1$ |   $1$   |
+| $0$  |   $0$   |
+| $1$  |   $1$   |
+
+Answer the following.
+
+**3.1.1.** Are $X$ and $Y$ independent? Justify your answer by comparing
+
+$$P(X=0\cap Y=0)$$
+
+with
+
+$$P(X=0) \times P(Y=0).$$
+
+**3.1.2.** Compute
+
+$$\mathbb{E}(X)
+\qquad
+\mathbb{E}(Y)
+\qquad
+\mathbb{E}(XY)$$
+
+and hence compute $\operatorname{Cov}(X,Y)$.
+
+> **Hint:** Since $Y=X^2$,
+>
+> $$XY=X^3.$$
+
+**3.1.3.** Explain in one or two sentences why this example shows that **zero covariance does not imply independence**.
+
+## 3.2. What Independence Does Imply
+
+`rubric={reasoning:2}`
+
+Suppose that **two random variables** $A$ and $B$ are independent and that the relevant expected values exist.
+
+Independence implies
+
+$$\mathbb{E}(AB)
+=
+\mathbb{E}(A)\mathbb{E}(B).$$
+
+Substitute this relationship into the covariance formula and determine the value of
+
+$$\operatorname{Cov}(A,B).$$
+
+Then complete the statement:
+
+$$A\text{ and }B\text{ independent}
+\quad\Longrightarrow\quad
+\operatorname{Cov}(A,B)=\underline{\hspace{1.5cm}}.$$
+
+Is the reverse implication necessarily true? Use the specific counterexample from **3.1** to support your answer in one or two sentences.
+
+## 3.3. Kendall's $\tau_K$ and a Nonlinear Monotonic Transformation
+
+`rubric={reasoning:6}`
+
+Now consider a different pair of random variables related through
+
+$$Z=U^3.$$
+
+The function $g(u)=u^3$ is **monotonically increasing**: whenever one $u$ value is larger than another, its transformed value is also larger.
+
+![$Z = U^3$](img/exercise_3_plot.jpg)
+
+Suppose we observe the following four pairs:
+
+| $u$  | $z=u^3$ |
+|:----:|:-------:|
+| $-2$ |  $-8$   |
+| $-1$ |  $-1$   |
+| $1$  |   $1$   |
+| $2$  |   $8$   |
+
+There are
+
+$$\binom{4}{2}=6$$
+
+distinct pairs of observations. An **observation** here is one row of the table, i.e., $(u,z)$.
+
+Then, use:
+
+**3.3.1.** How many of these six pairs are concordant, and how many are discordant?
+
+**3.3.2.** Compute Kendall's $\tau_K$.
+
+**3.3.3.** The relationship $Z=U^3$ is nonlinear, but it is perfectly monotonic. In one or two sentences, explain what Kendall's $\tau_K$ captures here that distinguishes it conceptually from covariance and Pearson's correlation.
+
+## 3.4. Putting the Ideas Together: What Can We Conclude?
+
+`rubric={reasoning:6}`
+
+The examples above illustrate that **independence, covariance/Pearson's correlation, and Kendall's** $\tau_K$ answer different questions:
+
+| Concept | What it describes |
+|:--:|:--:|
+| **Independence** | Whether knowing one random variable provides information about the other **or not** |
+| **Covariance (or Pearson's correlation)** | Linear dependence |
+| **Kendall's** $\tau_K$ | Monotonic dependence |
+
+Answer the following.
+
+**3.4.1.** In **3.1**, $X$ and $Y=X^2$ are dependent even though $\operatorname{Cov}(X,Y)=0$. What does this tell us about using zero covariance, or zero Pearson correlation, as evidence of independence? Answer in **no more than 2 sentences**.
+
+**3.4.2.** In **3.3**, Kendall's $\tau_K=1$ for the nonlinear relationship $Z=U^3$. Does $\tau_K=1$ imply a perfectly linear relationship? If not, what does it imply? Answer in **no more than 2 sentences**.
+
+**3.4.3.** Suppose two random variables have both Pearson's correlation equal to $0$ and Kendall's $\tau_K$ equal to $0$. Can we conclude from these two values alone that the random variables are independent? Explain in **no more than 2 sentences**.
+
+> **Take-away:** Independence is a property of the full joint distribution. Covariance (or Pearson's correlation) and Kendall's $\tau_K$ summarize particular forms of dependence. A value of zero for one or both of these measures does **not**, by itself, establish independence.
+
+## What You Need to Submit for Exercise 3
+
+This exercise contains only a **`reasoning`** component; there are no autograded `R` objects. Hence, provide enough mathematical work to support your answers **when necessary**. In particular, include:
+
+- the independence check and covariance calculation from **3.1**;
+- the short independence-to-zero-covariance argument from **3.2**;
+- the concordant/discordant pair count and Kendall's $\tau_K$ calculation from **3.3**; and
+- your three short synthesis responses from **3.4**.
+
+As discussed earlier in the lab, you do not need to use LaTeX. You may write your mathematical work by hand, take a clear picture, save it inside the `img` folder of your lab repository, and embed it in your `.Rmd` file. For example:
+
+![My solution to Exercise 3](img/my_answer_3.jpg)
+
+**ANSWERS:**
+
+*Type your answers here, replacing this text, if you are not providing a handwritten solution.*
+
+\newpage
+
+# Exercise 4: Updating a Length-of-Stay Distribution
+
+`rubric={autograde:6,reasoning:12}`
+
+The S.M.D.S. Barrington is a transport ship that regularly visits the Port of Vancouver. Let
+
+$$X=\text{the Barrington's total length of stay at the port, in days}.$$
+
+Based on historical records, suppose $X$ has the following probability mass function (PMF):
+
+| $x$ | $P(X=x)$ |
+|:---:|:--------:|
+| $1$ |  $0.10$  |
+| $2$ |  $0.20$  |
+| $3$ |  $0.30$  |
+| $4$ |  $0.40$  |
+
+Equivalently,
+
+$$P(X=i)=\frac{i}{10},
+\qquad
+i=1,2,3,4.$$
+
+In this exercise, we will see how **new information changes a probability distribution**.
+
+> **Conditioning workflow:** When you learn that an event $B$ has occurred:
+>
+> 1.  **restrict** the original sample space to outcomes that satisfy $B$;
+> 2.  **re-normalize** the probabilities of the remaining outcomes so that they sum to $1$; and
+> 3.  use this updated **conditional distribution** for subsequent probability or expected value calculations.
+>
+> This is equivalent to using
+>
+> $$P(A\mid B)
+> =
+> \frac{P(A\cap B)}{P(B)}.$$
+
+## 4.1. Updating the Distribution
+
+Suppose the captain tells you that the Barrington's total stay will be **at least 3 days**. In symbols, you now know that
+
+$$X\geq3.$$
+
+Start by completing the conditional PMF below.
+
+| $x$ | Original $P(X=x)$ | $P(X=x\mid X\geq3)$ |
+|:---:|:-----------------:|:-------------------:|
+| $1$ |      $0.10$       |         $0$         |
+| $2$ |      $0.20$       |         $0$         |
+| $3$ |      $0.30$       |                     |
+| $4$ |      $0.40$       |                     |
+
+Then find
+
+$$P(X=3\mid X\geq3).$$
+
+> **Heads-up:** The probabilities in the final column should sum to $1$.
+
+## 4.2. Before Receiving Any Additional Information
+
+Before receiving any information from the captain, what is the expected total length of stay? Compute the **marginal expected value**
+
+$$\mathbb{E}(X).$$
+
+## 4.3. Conditioning on a Different Piece of Information
+
+Now suppose instead that the captain tells you only that the total stay will be **at least 2 days**. Given this information, what is the probability that the total stay will be at least 3 days?
+
+In symbols, compute
+
+$$P(X\geq3\mid X\geq2).$$
+
+> **Before calculating:** Identify which outcomes remain possible after conditioning on $X\geq2$.
+
+## 4.4. Updating an Expected Value
+
+Return to the information from **4.1**: the total stay is known to be at least 3 days. What is the expected total length of stay **given this information**?
+
+Compute
+
+$$\mathbb{E}(X\mid X\geq3).$$
+
+Use the conditional PMF that you constructed in **4.1**.
+
+Then, in **no more than one sentence in plain words**, compare this conditional expected value with the marginal expected value from **4.2**.
+
+## 4.5. A Marginal Measure of Spread
+
+Now return to the **original, unconditional PMF**.
+
+Compute the marginal variance
+
+$$\operatorname{Var}(X).$$
+
+Recall that
+
+$$\operatorname{Var}(X)
+=
+\mathbb{E}(X^2)-[\mathbb{E}(X)]^2.$$
+
+## 4.6. A Marginal Measure of Uncertainty
+
+Using the original PMF, compute the entropy
+
+$$H(X)
+=
+-\sum_x P(X=x)\log P(X=x),$$
+
+using the natural logarithm.
+
+> **Heads-up:** $H(X)$ here describes uncertainty in the **marginal distribution** of $X$. If we instead calculated entropy using the conditional PMF from **4.1**, that would describe uncertainty after learning that $X\geq3$.
+
+## What You Need to Submit for Exercise 4
+
+For the **`reasoning` component**, show enough intermediate mathematical work for us to understand how you obtained each result. In particular:
+
+- for **4.1**, show how the original PMF is restricted and re-normalized to obtain the conditional PMF;
+- for **4.2**, show the expected-value calculation using the marginal PMF;
+- for **4.3**, identify the outcomes satisfying the condition before computing the conditional probability;
+- for **4.4**, use the conditional PMF from **4.1** to compute the conditional expectation;
+- for **4.5**, show the quantities used to obtain the variance; and
+- for **4.6**, show how the entropy is computed from the probabilities in the marginal PMF.
+
+As discussed earlier in the lab, you do not need to use LaTeX. You may work through the mathematics by hand, take a clear picture, save it inside the `img` folder of your lab repository, and embed it in your `.Rmd` file. For example:
+
+![My solution to Exercise 4](img/my_answer_4.jpg)
+
+For the **`autograde` component**, assign your final numeric answers to:
+
+- `answer4_1`
+- `answer4_2`
+- `answer4_3`
+- `answer4_4`
+- `answer4_5`
+- `answer4_6`
+
+> **Heads-up:** A successful test confirms the corresponding **autograde answer only**. Your intermediate work and explanations will be assessed separately for the reasoning rubric.
+
+**ANSWERS:**
+
+*Type your answers here, replacing this text, if you are not providing a handwritten solution.*
+
+```{r}
+answer4_1 <- NULL
+answer4_2 <- NULL
+answer4_3 <- NULL
+answer4_4 <- NULL
+answer4_5 <- NULL
+answer4_6 <- NULL
+
+# YOUR CODE HERE
+```
+
+```{r}
+. = ottr::check("tests/Q4-autograder.R")
+```
+
+\newpage
+
+# Exercise 5: Multivariate Conditioning
+
+In **Exercise 4**, we worked with one random variable describing a ship's length of stay. We will now extend that setting to **two independent ship visits** and examine what happens when we condition on information involving more than one random variable.
+
+## 5.1. Combining Two Independent Lengths of Stay
+
+`rubric={autograde:5,reasoning:10}`
+
+Let $X_1$ and $X_2$ be **independent and identically distributed (*iid*) random variables**, each with the same PMF as $X$ from **Exercise 4**:
+
+| $x$ | $P(X_j=x)$ |
+|:---:|:----------:|
+| $1$ |   $0.10$   |
+| $2$ |   $0.20$   |
+| $3$ |   $0.30$   |
+| $4$ |   $0.40$   |
+
+for $j=1,2$.
+
+Here, $X_1$ and $X_2$ represent the lengths of stay for two independent ship visits. Define
+
+$$Z=X_1+X_2,$$
+
+so that $Z$ is the **combined length of stay across the two visits**.
+
+Because $X_1$ and $X_2$ are independent,
+
+$$P(X_1=x_1\cap X_2=x_2)
+=
+P(X_1=x_1) \times P(X_2=x_2).$$
+
+> **Strategy:** When conditioning on an event involving $Z=X_1+X_2$, first identify the pairs $(x_1,x_2)$ that satisfy the condition. Then, use the joint probabilities of those pairs.
+
+Find the following quantities.
+
+### 5.1.1. Expected Combined Length of Stay
+
+Compute
+
+$$\mathbb{E}(Z).$$
+
+### 5.1.2. Variance of the Combined Length of Stay
+
+Compute
+
+$$\operatorname{Var}(Z).$$
+
+> **Recall:**
+>
+> $$\operatorname{Var}(X_1+X_2)
+> =
+> \operatorname{Var}(X_1)
+> +
+> \operatorname{Var}(X_2)
+> +
+> 2\operatorname{Cov}(X_1,X_2).$$
+
+### 5.1.3. Conditioning on the Sum
+
+Suppose you learn that the two visits have a combined length of stay of **at least 6 days**.
+
+Compute
+
+$$P(X_1=2\mid Z\geq6).$$
+
+> **Before calculating:** If $X_1=2$ and $Z\geq6$, what must be true about $X_2$?
+
+### 5.1.4. Conditioning on the Other Independent Visit
+
+Compute
+
+$$P(X_1=2\mid X_2=2).$$
+
+In **no more than 1 sentence**, explain why your answer agrees with the marginal probability $P(X_1=2)$.
+
+### 5.1.5. Covariance Between the Two Visits
+
+Compute
+
+$$\operatorname{Cov}(X_1,X_2).$$
+
+Use the fact that $X_1$ and $X_2$ are independent to justify your answer.
+
+### What You Need to Submit for Section 5.1
+
+For the **`reasoning` component**, show enough mathematical work to support each result. In particular:
+
+- for **5.1.1**, use linearity of expectation;
+- for **5.1.2**, show how independence affects the covariance term;
+- for **5.1.3**, identify the pairs $(X_1,X_2)$ compatible with the conditioning event;
+- for **5.1.4**, connect your calculation to independence; and
+- for **5.1.5**, justify the covariance using independence.
+
+For the **autograde component**, assign your final numeric answers to:
+
+- `answer5_1_1`
+- `answer5_1_2`
+- `answer5_1_3`
+- `answer5_1_4`
+- `answer5_1_5`
+
+As discussed earlier in the lab, LaTeX is not required for your reasoning. You may write your work by hand, save a clear image in the `img` folder, and embed it in your `.Rmd` file. For example:
+
+![My solution to Exercise 5.1](img/my_answer_5_1.jpg)
+
+> **Heads-up:** A successful test confirms the corresponding **`autograde` answer only**. Your intermediate work and explanations will be assessed separately for the reasoning rubric.
+
+**ANSWERS:**
+
+*Type your answer here, replacing this text.*
+
+```{r}
+answer5_1_1 <- NULL
+answer5_1_2 <- NULL
+answer5_1_3 <- NULL
+answer5_1_4 <- NULL
+answer5_1_5 <- NULL
+
+# YOUR CODE HERE
+```
+
+```{r}
+. = ottr::check("tests/Q5-1-autograder.R")
+```
+
+### 5.1.6. (Challenging and non-autograded) Covariance with the Sum
+
+`rubric={reasoning:3}`
+
+We know that $Z=X_1+X_2$. Compute
+
+$$\operatorname{Cov}(Z,X_1).$$
+
+Show your work and briefly explain why the result is **not zero**, even though $X_1$ and $X_2$ are independent.
+
+> **Hint:** You may find the covariance property
+>
+> $$\operatorname{Cov}(A+B,C)
+> =
+> \operatorname{Cov}(A,C)+\operatorname{Cov}(B,C)$$
+>
+> useful.
+
+As discussed earlier in the lab, LaTeX is not required for your reasoning. You may write your work by hand, save a clear image in the `img` folder, and embed it in your `.Rmd` file. For example:
+
+![My solution to Exercise 5.1.6](img/my_answer_5_1_6.jpg)
+
+**ANSWERS:**
+
+*Type your answer here, replacing this text.*
+
+## 5.2. Conditioning the Sum on One Component
+
+We will now examine how the distribution of
+
+$$Z=X_1+X_2$$
+
+changes when we learn information about $X_1$.
+
+### 5.2.1. (Challenging and non-autograded) Conditioning on an Exact Value
+
+`rubric={reasoning:2}`
+
+Find the conditional distribution
+
+$$P(Z=z\mid X_1=3)$$
+
+for all possible values of $z$.
+
+> **Strategy:** Once we know that $X_1=3$,
+>
+> $$Z=3+X_2.$$
+>
+> Because $X_1$ and $X_2$ are independent, conditioning on $X_1=3$ does not change the distribution of $X_2$.
+
+### 5.2.2. (Challenging and non-autograded) Comparing Uncertainty
+
+`rubric={reasoning:2}`
+
+Compare the entropy of the conditional distribution
+
+$$P(Z=z\mid X_1=3)$$
+
+with the entropy of the marginal distribution of $X_1$.
+
+Is it **larger, smaller, or the same**? Explain in **no more than 2 sentences**.
+
+### 5.2.3. (Challenging and non-autograded) Conditioning on a Range of Values
+
+`rubric={reasoning:2}`
+
+Now suppose you learn only that
+
+$$X_1\geq3.$$
+
+Find the complete conditional distribution
+
+$$P(Z=z\mid X_1\geq3)$$
+
+for all possible values of $z$.
+
+> **Strategy:** From **Exercise 4**,
+>
+> $$P(X_1=3\mid X_1\geq3)=\frac{3}{7},
+> \qquad
+> P(X_1=4\mid X_1\geq3)=\frac{4}{7}.$$
+>
+> For a given $z$, you can combine the possible ways to obtain that value using
+>
+> $$P(Z=z\mid X_1\geq3)
+> =
+> \sum_{x_1\in\{3,4\}}
+> P(X_1=x_1\mid X_1\geq3)
+> P(X_2=z-x_1).$$
+
+### What You Need to Submit for Section 5.2
+
+- For **5.2.1**, provide the complete conditional PMF of $Z$ given $X_1=3$.
+- For **5.2.2**, provide your short entropy comparison and justification.
+- For **5.2.3**, show how the possible values of $X_1$ and $X_2$ combine to produce each possible value of $Z$ after conditioning on $X_1\geq3$.
+
+As discussed earlier in the lab, LaTeX is not required for your reasoning. You may write your work by hand, save a clear image in the `img` folder, and embed it in your `.Rmd` file. For example:
+
+![My solution to Exercise 5.2](img/my_answer_5_2_challenging_section.jpg)
+
+**ANSWERS:**
+
+*Type your answers here, replacing this text, if you are not providing a handwritten solution.*
+
+\newpage
+
+# Exercise 6: Conditional Independence
+
+## 6.1. Checking Conditional Independence
+
+`rubric={reasoning:2}`
+
+A company uses two automated systems to screen transactions:
+
+- $X=1$ if a **rule-based system** flags a transaction, and $X=0$ otherwise;
+- $Y=1$ if a **machine-learning system** flags a transaction, and $Y=0$ otherwise;
+- $Z$ indicates the transaction type, where $Z=1$ means **online** and $Z=0$ means **in person**.
+
+Two random variables $X$ and $Y$ are **conditionally independent given** $Z$ if, within each value of $Z$,
+
+$$P(X=x\cap Y=y\mid Z=z)
+=
+P(X=x\mid Z=z) \times P(Y=y\mid Z=z).$$
+
+Suppose the following probabilities are known:
+
+| Transaction type | $P(X=1\mid Z=z)$ | $P(Y=1\mid Z=z)$ | $P(X=1\cap Y=1\mid Z=z)$ |
+|:--:|:--:|:--:|:--:|
+| Online ($Z=1$) | $0.40$ | $0.50$ | $0.20$ |
+| In person ($Z=0$) | $0.20$ | $0.30$ | $0.06$ |
+
+Determine whether $X$ and $Y$ are **conditionally independent given** $Z$.
+
+For each transaction type, compare
+
+$$P(X=1\cap Y=1\mid Z=z)$$
+
+with
+
+$$P(X=1\mid Z=z) \times P(Y=1\mid Z=z).$$
+
+Then, state your conclusion in **no more than 2 sentences**.
+
+> **Heads-up:** Since $X$ and $Y$ are binary, their conditional joint distribution has only four possible pairs:
+>
+> $$(0,0),\ (0,1),\ (1,0),\ (1,1).$$
+>
+> Once the conditional marginal probabilities of $X$ and $Y$ are known, checking the factorization for $(X,Y)=(1,1)$ is enough in this setting. If
+>
+> $$P(X=1\cap Y=1\mid Z=z)
+> =
+> P(X=1\mid Z=z) \times P(Y=1\mid Z=z),$$
+>
+> then the probabilities of the other three pairs are determined by subtraction and also satisfy the corresponding factorization.
+
+**ANSWER:**
+
+*Type your answer here, replacing this text.*
+
+## 6.2. Conceptual Reflection
+
+`rubric={reasoning:2}`
+
+Suppose $X$ and $Y$ are conditionally independent given $Z$, as you found above. In **no more than 2 sentences**, explain what this means in practice for the two screening systems once the transaction type is known.
+
+**ANSWER:**
+
+*Type your answer here, replacing this text.*
