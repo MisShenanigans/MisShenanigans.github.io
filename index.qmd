@@ -9,8 +9,8 @@ a picture of me:
 
 ![](images/pic_of_me.jpeg){width=250px}
 
-# Mishenanigan's Profile
+# MisShenanigans' Profile
 
-**Things about me:** Hello, this is Mishenanigan from House Shenanigans. I am a student at the University of British Columbia. I was born in a small town in Southernwest Chinese coast. My undergraduate degree was done in the department of Mathmathics from the the same institution. From the MDS program I am hoping to learn more about data science and its applications in the real world.
+**Things about me:** Hello, this is MisShenanigans from House Shenanigans. I am a student at the University of British Columbia. I was born in a small town in Southernwest Chinese coast. My undergraduate degree was done in the department of Mathmathics from the the same institution. From the MDS program I am hoping to learn more about data science and its applications in the real world.
 
 **Things I do** I mean I am writing a novel and I am hoping to one day publish it but I probably have a long way to go from there. 
