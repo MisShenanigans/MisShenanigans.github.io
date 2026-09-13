@@ -3,13 +3,15 @@ project:
   output-dir: docs
 
 website:
-  title: "MisShenanigans_Profile"
+  title: MisShenanigans
   navbar:
     left:
       - href: index.qmd
         text: Home
-      - about.qmd
-
+      - href: about.qmd
+        text: About
+      - href: blog.qmd
+        text: Blog
 format:
   html:
     theme:
