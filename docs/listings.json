@@ -2,6 +2,8 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/Optimal_Rivalry_R_Demo/index.html",
+      "/posts/Optimal_Rivalry_Python_Demo/index.html",
       "/posts/first-weeks/index.html"
     ]
   }

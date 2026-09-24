@@ -1,0 +1,14 @@
+[project]
+name = "optimal-rivalry-python-demo"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "cvxpy>=1.9.3",
+    "ipykernel>=7.3.0",
+    "jupyter>=1.1.1",
+    "nashpy>=0.0.43",
+    "numpy>=2.5.3",
+    "pandas>=3.0.6",
+    "pulp>=3.3.2",
+    "scipy>=1.18.1",
+]

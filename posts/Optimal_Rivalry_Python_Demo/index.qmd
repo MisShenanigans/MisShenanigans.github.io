@@ -1,0 +1,14 @@
+---
+title: "Optimal_Rivalry Python Demo"
+author: Mishenanigans
+date: 2026-09-23
+---
+
+## Marvel Rivals Team Optimization
+
+This arcticle is a demonstration of an undergraduate project I've done for the popular video game Marvel Rivals. Before I go into the details of the project, I want to give a brief overview of the game itself in case you are not already familiar with it. [Marvel Rivals](https://www.marvelrivals.com/) is a 6v6 team-based fighting game where players can choose from a roster of over 50+ Marvel characters to form a team and battle against other players.
+
+Given the uniqueness of each character, the selection of roaster becomes 
+
+```{python}
+```
