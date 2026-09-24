@@ -6,6 +6,7 @@ dependencies = [
     "cvxpy>=1.9.3",
     "ipykernel>=7.3.0",
     "jupyter>=1.1.1",
+    "matplotlib>=3.11.2",
     "nashpy>=0.0.43",
     "numpy>=2.5.3",
     "pandas>=3.0.6",

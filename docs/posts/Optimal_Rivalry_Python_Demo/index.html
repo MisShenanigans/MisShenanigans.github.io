@@ -28,6 +28,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -76,6 +111,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -125,7 +189,23 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#marvel-rivals-team-optimization" id="toc-marvel-rivals-team-optimization" class="nav-link active" data-scroll-target="#marvel-rivals-team-optimization">Marvel Rivals Team Optimization</a></li>
+  <li><a href="#marvel-rivals-team-optimization" id="toc-marvel-rivals-team-optimization" class="nav-link active" data-scroll-target="#marvel-rivals-team-optimization">Marvel Rivals Team Optimization</a>
+  <ul class="collapse">
+  <li><a href="#data-collection" id="toc-data-collection" class="nav-link" data-scroll-target="#data-collection">Data Collection</a></li>
+  <li><a href="#introduction-to-the-problem" id="toc-introduction-to-the-problem" class="nav-link" data-scroll-target="#introduction-to-the-problem">Introduction to the Problem</a>
+  <ul class="collapse">
+  <li><a href="#problem-setup" id="toc-problem-setup" class="nav-link" data-scroll-target="#problem-setup">Problem Setup</a></li>
+  <li><a href="#optimization-objective" id="toc-optimization-objective" class="nav-link" data-scroll-target="#optimization-objective">Optimization Objective</a></li>
+  <li><a href="#optimal-team-selection" id="toc-optimal-team-selection" class="nav-link" data-scroll-target="#optimal-team-selection">Optimal Team Selection:</a></li>
+  </ul></li>
+  <li><a href="#optimal-solution-to-von-neumann-min-max-equation" id="toc-optimal-solution-to-von-neumann-min-max-equation" class="nav-link" data-scroll-target="#optimal-solution-to-von-neumann-min-max-equation">Optimal Solution to Von Neumann Min Max Equation</a>
+  <ul class="collapse">
+  <li><a href="#the-minimax-formulation" id="toc-the-minimax-formulation" class="nav-link" data-scroll-target="#the-minimax-formulation">The Minimax Formulation</a></li>
+  <li><a href="#why-minimax" id="toc-why-minimax" class="nav-link" data-scroll-target="#why-minimax">Why Minimax?</a></li>
+  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -165,8 +245,293 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="marvel-rivals-team-optimization" class="level1">
 <h1>Marvel Rivals Team Optimization</h1>
+<p>This arcticle is a demonstration of an undergraduate project I’ve done for the popular video game Marvel Rivals. Before I go into the details of the project, I want to give a brief overview of the game itself in case you are not already familiar with it. <a href="https://www.marvelrivals.com/">Marvel Rivals</a> is a 6v6 team-based fighting game where players can choose from a roster of over 50+ Marvel characters to form a team and battle against other players.</p>
+<p>Given the uniqueness of each character, the selection of roaster becomes an important factor in determining the outcome of a match (asides from obvious factors like player skill). The goal of this demo is to demonstrate This project is to model how a clssical optinmization in Von Neumann’s game theory can be applied to modern video games.</p>
+<div id="efab17ea" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Libaries</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cvxpy <span class="im">as</span> cp</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> nashpy <span class="im">as</span> nash</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pulp</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math <span class="im">as</span> math</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.optimize <span class="im">import</span> linprog</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> itertools <span class="im">import</span> combinations</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> gaussian_kde</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="data-collection" class="level2">
+<h2 class="anchored" data-anchor-id="data-collection">Data Collection</h2>
+<p>This project will mostly be using two dataset from the GitHub repository <a href="https://github.com/MisShenanigans/Optimal_Rivalry">Optimal_Rivalry</a> which was made by… well me, the author of this article and a few classmates in her undergraduate years. We will primarily be using two datasets from the repository (both were scrapped from a third-party website <a href="https://rivalsmeta.com/">RivalsMeta</a>):</p>
+<ul>
+<li><a href="https://github.com/MisShenanigans/Optimal_Rivalry/blob/main/MarvelRivals_NumMatches_Matrix.csv">MarvelRivals_NumMatches_Matrix.csv</a>: This is a matrixized dataset that contains the number of matches played between each pair of characters in the game. The rows and columns of the matrix represent the characters, and the values in the matrix represent the number of matches played between each pair of characters. This dataset will be used to calculate the win rates between each pair of characters.</li>
+<li><a href="https://github.com/MisShenanigans/Optimal_Rivalry/blob/main/MarvelRivals_WinRate_Matrix.csv">MarvelRivals_WinRate_Matrix.csv</a>: This is a matrixized dataset that contains the win rates of each pair of characters in the game. The rows and columns of the matrix represent the characters, and the values in the matrix represent the win rate of each pair of characters. This dataset will be used to analyze the performance of different character combinations.</li>
+</ul>
+<p>From there we will construct a Payoff Matrix using a Gaussian Kernel Density Estimation technique to estimate the win rates between each pair of characters. The Payoff Matrix will be the basis of a classical optimization problem in Von Neumann’s game theory.</p>
+<div id="b207f3c8" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>NumMatches_df <span class="op">=</span> pd.read_csv(<span class="st">"https://raw.githubusercontent.com/MisShenanigans/Optimal_Rivalry/main/MarvelRivals_NumMatches_Matrix.csv"</span>, index_col<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>WinRate_df <span class="op">=</span> pd.read_csv(<span class="st">"https://raw.githubusercontent.com/MisShenanigans/Optimal_Rivalry/main/MarvelRivals_WinRate_Matrix.csv"</span>, index_col<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for dimensions of the dataframes</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"NumMatches_df shape:"</span>, NumMatches_df.shape)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"WinRate_df shape:"</span>, WinRate_df.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NumMatches_df shape: (56, 56)
+WinRate_df shape: (56, 56)</code></pre>
+</div>
+</div>
+<div id="c83568ec" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Construct the KDE for the win rates</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>win_rates <span class="op">=</span> WinRate_df.to_numpy(dtype<span class="op">=</span><span class="bu">float</span>).ravel()</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>num_matches <span class="op">=</span> NumMatches_df.to_numpy(dtype<span class="op">=</span><span class="bu">float</span>).ravel()</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>min_value, max_value <span class="op">=</span> win_rates.<span class="bu">min</span>(), win_rates.<span class="bu">max</span>()</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>kde <span class="op">=</span> gaussian_kde(win_rates, weights<span class="op">=</span>num_matches)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>total_cdf <span class="op">=</span> kde.integrate_box_1d(min_value, max_value)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Win-rate range: </span><span class="sc">{</span>min_value<span class="sc">:.2f}</span><span class="ss">% to </span><span class="sc">{</span>max_value<span class="sc">:.2f}</span><span class="ss">%; KDE mass: </span><span class="sc">{</span>total_cdf<span class="sc">:.6f}</span><span class="ss">"</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>utilities <span class="op">=</span> {</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    rate: <span class="bu">round</span>(<span class="dv">2</span> <span class="op">*</span> kde.integrate_box_1d(min_value, rate) <span class="op">/</span> total_cdf <span class="op">-</span> <span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> rate <span class="kw">in</span> np.unique(win_rates)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>payoff_values <span class="op">=</span> np.array([utilities[rate] <span class="cf">for</span> rate <span class="kw">in</span> win_rates]).reshape(WinRate_df.shape)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>Payoff_df <span class="op">=</span> pd.DataFrame(payoff_values, index<span class="op">=</span>WinRate_df.index, columns<span class="op">=</span>WinRate_df.columns)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Win-rate range: 25.12% to 74.88%; KDE mass: 0.999893</code></pre>
+</div>
+</div>
+<p>The Payoff Matrix is a normalized to be normally distributed with a mean of 0 and a standard deviation of 1. The normalization is done to ensure that the optimization problem is well-defined and to avoid numerical instability. The Payoff Matrix will be used to find the optimal strategy for each player in the game. The KDE should look like a bell curve with the peak at the mean of 0 and the tails extending in both directions:</p>
+<div id="3fe5f6c0" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the normalized KDE:</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>bandwidth <span class="op">=</span> np.sqrt(kde.covariance[<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>x_grid <span class="op">=</span> np.linspace(win_rates.<span class="bu">min</span>() <span class="op">-</span> <span class="dv">3</span> <span class="op">*</span> bandwidth, win_rates.<span class="bu">max</span>() <span class="op">+</span> <span class="dv">3</span> <span class="op">*</span> bandwidth, <span class="dv">600</span>,)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>), layout<span class="op">=</span><span class="st">"constrained"</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>ax.hist(win_rates, bins<span class="op">=</span><span class="dv">25</span>, weights<span class="op">=</span>num_matches, density<span class="op">=</span><span class="va">True</span>, color<span class="op">=</span><span class="st">"#39accb"</span>, edgecolor<span class="op">=</span><span class="st">"#34454f"</span>, alpha<span class="op">=</span><span class="fl">0.8</span>, label<span class="op">=</span><span class="st">"Weighted Histogram"</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>ax.plot(x_grid, kde(x_grid), color<span class="op">=</span><span class="st">"red"</span>, linewidth<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="st">"Weighted Gaussian KDE"</span>,)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">"Win Rate Distribution with Weighted Gaussian KDE"</span>, xlabel<span class="op">=</span><span class="st">"Win Rate (%)"</span>, ylabel<span class="op">=</span><span class="st">"Density (Weighted by Matches)"</span>, ylim<span class="op">=</span>(<span class="dv">0</span>, <span class="va">None</span>))</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>ax.grid(<span class="va">True</span>, linestyle<span class="op">=</span><span class="st">"--"</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>ax.set_axisbelow(<span class="va">True</span>)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-5-output-1.png" width="971" height="587" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="introduction-to-the-problem" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-to-the-problem">Introduction to the Problem</h2>
+<p>Given a known opponent team, how can we choose six heroes to maximize our team’s matchup score? We model this as a binary optimization problem inspired by game theory.</p>
+<section id="problem-setup" class="level3">
+<h3 class="anchored" data-anchor-id="problem-setup">Problem Setup</h3>
+<ul>
+<li>Let <span class="math inline">\(x \in \{0,1\}^{56}\)</span> represent our team, the row player’s selection. Each entry equals 1 if the corresponding hero is selected and 0 otherwise.</li>
+<li>Let <span class="math inline">\(y \in \{0,1\}^{56}\)</span> represent the opponent’s team, the column player’s selection. For this problem, <span class="math inline">\(y\)</span> is fixed and known.</li>
+<li>Each team contains exactly six heroes.</li>
+<li>Let <span class="math inline">\(A \in \mathbb{R}^{56 \times 56}\)</span> be the payoff matrix, where <span class="math inline">\(A_{ij}\)</span> measures the matchup score of our hero <span class="math inline">\(i\)</span> against the opponent’s hero <span class="math inline">\(j\)</span>.</li>
+</ul>
+<p>Our team’s total matchup score is <span class="math inline">\(x^\top A y\)</span>, which adds the scores across all pairs of selected heroes.</p>
+</section>
+<section id="optimization-objective" class="level3">
+<h3 class="anchored" data-anchor-id="optimization-objective">Optimization Objective</h3>
+<p>We choose <span class="math inline">\(x\)</span> to solve:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\max_{x \in \{0,1\}^{56}} \quad &amp; x^\top A y \\
+\text{subject to} \quad &amp; \sum_{i=1}^{56} x_i = 6.
+\end{aligned}
+\]</span></p>
+<p>The opponent’s fixed team also satisfies:</p>
+<p><span class="math display">\[
+y \in \{0,1\}^{56},
+\qquad
+\sum_{i=1}^{56} y_i = 6.
+\]</span></p>
+<p>Next, we define helper functions to convert between hero names and binary team vectors, along with example teams for both players.</p>
+<div id="fb9e77b5" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>payoff_df <span class="op">=</span> Payoff_df.copy()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>payoff_matrix <span class="op">=</span> payoff_df.values</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>hero_list <span class="op">=</span> payoff_df.columns.tolist()</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="bu">len</span>(hero_list)  <span class="co"># Number of characters</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert a list of character names (length 6) into a binary bector</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> team_to_vector(selected_heroes):</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    vector <span class="op">=</span> np.zeros(<span class="bu">len</span>(hero_list), dtype<span class="op">=</span><span class="bu">int</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, hero <span class="kw">in</span> <span class="bu">enumerate</span>(hero_list):</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> hero <span class="kw">in</span> selected_heroes:</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>            vector[i] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> vector</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert a binary bector into a list of character names (length 6)</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> vector_to_team(binary_vector):</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    selected_heroes <span class="op">=</span> [hero_list[i] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(hero_list)) <span class="cf">if</span> binary_vector[i] <span class="op">==</span> <span class="dv">1</span>]</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> selected_heroes</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Example Teams</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>Avengers <span class="op">=</span> [<span class="st">"Black Widow"</span>, <span class="st">"Iron Man"</span>, <span class="st">"Thor"</span>, <span class="st">"Hulk"</span>, <span class="st">"Hawkeye"</span>, <span class="st">"Captain America"</span>]</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>FantasticFour <span class="op">=</span> [<span class="st">"Invisible Woman"</span>, <span class="st">"The Thing"</span>, <span class="st">"Human Torch"</span>, <span class="st">"Mister Fantastic"</span>, <span class="st">"Spider Man"</span>, <span class="st">"Wolverine"</span>]</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>Guardians <span class="op">=</span> [<span class="st">"Mantis"</span>, <span class="st">"Rocket Raccoon"</span>, <span class="st">"Adam Warlock"</span>, <span class="st">"Star Lord"</span>, <span class="st">"Groot"</span>, <span class="st">"Venom"</span>]</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>Xmen <span class="op">=</span> [<span class="st">"Magneto"</span>, <span class="st">"Psylocke"</span>, <span class="st">"Wolverine"</span>, <span class="st">"Magik"</span>, <span class="st">"Storm"</span>, <span class="st">"Emma Frost"</span>]</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>RandomTeam <span class="op">=</span> [<span class="st">"Magneto"</span>, <span class="st">"Doctor Strange"</span>, <span class="st">"The Punisher"</span>, <span class="st">"Scarlet Witch"</span>, <span class="st">"Cloak &amp; Dagger"</span>, <span class="st">"Loki"</span>]</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>TankHealder <span class="op">=</span> [<span class="st">"Thor"</span>, <span class="st">"Angela"</span>, <span class="st">"Loki"</span>, <span class="st">"Rogue"</span>, <span class="st">"Gambit"</span>, <span class="st">"Magneto"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>For example, if an opponent team consists the Avengers, and our team consists of the X-Men, the outcome of the utility function <span class="math inline">\(x^\top A y\)</span> will be the total matchup score of our team against the opponent’s team. The goal is to find the optimal selection of heroes for our team that maximizes this score.</p>
+<div id="5b36ac07" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>rowPlayer <span class="op">=</span> team_to_vector(Xmen)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>columnPlayer <span class="op">=</span> team_to_vector(Avengers)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> rowPlayer.T <span class="op">@</span> payoff_matrix <span class="op">@</span> columnPlayer</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>result</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>np.float64(3.0200000000000005)</code></pre>
+</div>
+</div>
+<p>3.02 is a positive score, which means that the X-Men team is expected to have an advantage over the Avengers team in a matchup. The higher the score, the better our team’s performance against the opponent’s team.</p>
+</section>
+<section id="optimal-team-selection" class="level3">
+<h3 class="anchored" data-anchor-id="optimal-team-selection">Optimal Team Selection:</h3>
+<p>It turns out, when the enemy team is known, it is fairly easy to find the optimal team slelection using cvxpy.</p>
+<div id="c8bca42a" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># In order to use, first use team_to_vector() to convert the list of characters into a binary vector</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> base_optimal_counter(opponent_team):</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> cp.Variable(n, boolean<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> opponent_team</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    constraint_0 <span class="op">=</span> [cp.<span class="bu">sum</span>(x) <span class="op">==</span> <span class="dv">6</span>]</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    constraint_1 <span class="op">=</span> [cp.<span class="bu">sum</span>(y) <span class="op">==</span> <span class="dv">6</span>]</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    obj <span class="op">=</span> cp.Maximize(x.T <span class="op">@</span> payoff_matrix <span class="op">@</span> y)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    prob <span class="op">=</span> cp.Problem(obj,constraint_0<span class="op">+</span>constraint_1)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    prob.solve()</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x.value</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> base_optimal_counter_info(opponent_team):</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> cp.Variable(n, boolean<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> opponent_team</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    constraint_0 <span class="op">=</span> [cp.<span class="bu">sum</span>(x) <span class="op">==</span> <span class="dv">6</span>]</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    constraint_1 <span class="op">=</span> [cp.<span class="bu">sum</span>(y) <span class="op">==</span> <span class="dv">6</span>]</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    obj <span class="op">=</span> cp.Maximize(x.T <span class="op">@</span> payoff_matrix <span class="op">@</span> y)</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    prob <span class="op">=</span> cp.Problem(obj,constraint_0<span class="op">+</span>constraint_1)</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    prob.solve()</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    optimal_team <span class="op">=</span> vector_to_team(x.value.<span class="bu">round</span>())</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    expected_value <span class="op">=</span> x.value.T <span class="op">@</span> payoff_matrix <span class="op">@</span> y</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Optimal Team:"</span>)</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> hero <span class="kw">in</span> optimal_team:</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"-</span><span class="sc">{</span>hero<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Expected Utility Score of (x^T * A * y) is: </span><span class="sc">{</span>expected_value<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x.value</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>When the opponent team is the Avengers, the optimal team selection is:</p>
+<div id="9dcf4882" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>OpponentTeam <span class="op">=</span> Avengers</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> team_to_vector(OpponentTeam)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Best Conter to the Avengers is:"</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>OpponentTeamConter <span class="op">=</span> base_optimal_counter_info(y)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Best Conter to the Avengers is:
+Optimal Team:
+-Devil Dinosaur
+-Peni Parker
+-Magik
+-Storm
+-Mantis
+-Ultron
+Expected Utility Score of (x^T * A * y) is: 23.86</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="optimal-solution-to-von-neumann-min-max-equation" class="level2">
+<h2 class="anchored" data-anchor-id="optimal-solution-to-von-neumann-min-max-equation">Optimal Solution to Von Neumann Min Max Equation</h2>
+<p>In zero-sum games (which category this game falls into), the <strong>Von Neumann Minimax Theorem</strong> guarantees the existence of an optimal strategy that a player can adopt to <strong>maximize their worst-case outcome</strong>, regardless of what the opponent chooses.</p>
+<hr>
+<section id="the-minimax-formulation" class="level3">
+<h3 class="anchored" data-anchor-id="the-minimax-formulation">The Minimax Formulation</h3>
+<p>Let <code>A</code> be the <strong>payoff matrix</strong>, where each entry <code>A[i, j]</code> represents how well hero <em>i</em> performs against hero <em>j</em>. Then the minimax objective is:</p>
+<p><span class="math display">\[
+\max_{\mathbf{x}} \ \min_{\mathbf{y}} \ \mathbf{x}^T A \mathbf{y}
+\]</span></p>
+<ul>
+<li><code>x</code> is our strategy (a 6-hero team, encoded as a binary vector of length 37)</li>
+<li><code>y</code> is the opponent’s strategy (also a 6-hero team)</li>
+<li>The game is <strong>zero-sum</strong>, meaning if we gain, the opponent loses equally.</li>
+</ul>
+<p>This equation models the idea:<br>
+&gt; What is the best team we can pick <strong>assuming the opponent will counter us in the worst way possible</strong>?</p>
+<hr>
+</section>
+<section id="why-minimax" class="level3">
+<h3 class="anchored" data-anchor-id="why-minimax">Why Minimax?</h3>
+<p>Unlike the base counter strategy (which assumes the opponent team is known), this problem assumes <strong>we don’t know the opponent’s team</strong>, and instead optimize for the <strong>safest possible team</strong>, one that performs reliably across the board. This is especially useful for a team of new players who has no idea about the game.</p>
+</section>
+<section id="implementation" class="level3">
+<h3 class="anchored" data-anchor-id="implementation">Implementation</h3>
+<p>And it turns out, the solution to the Min Max Question can be found relatively using greedy descent optimization.</p>
+<div id="1d9d9382" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> min_max_solution_greedy(payoff_matrix):</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    current_team <span class="op">=</span> np.zeros(n, dtype<span class="op">=</span><span class="bu">int</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    current_team[:<span class="dv">6</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    improvement <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> improvement:</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        opponent <span class="op">=</span> base_optimal_counter(current_team)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        opponent <span class="op">=</span> np.<span class="bu">round</span>(opponent)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>        current_score <span class="op">=</span> current_team.T <span class="op">@</span> payoff_matrix <span class="op">@</span> opponent</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>        improvement <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>        best_swap_score <span class="op">=</span> current_score</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>        best_team <span class="op">=</span> current_team.copy()</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>        current_indices <span class="op">=</span> np.where(current_team <span class="op">==</span> <span class="dv">1</span>)[<span class="dv">0</span>]</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>        remaining_indices <span class="op">=</span> np.where(current_team <span class="op">==</span> <span class="dv">0</span>)[<span class="dv">0</span>]</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> out_hero <span class="kw">in</span> current_indices:</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> in_hero <span class="kw">in</span> remaining_indices:</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>                temp_team <span class="op">=</span> current_team.copy()</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>                temp_team[out_hero] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>                temp_team[in_hero] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>                temp_score <span class="op">=</span> temp_team.T <span class="op">@</span> payoff_matrix <span class="op">@</span> base_optimal_counter(temp_team)</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> temp_score <span class="op">&gt;</span> best_swap_score:</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>                    best_swap_score <span class="op">=</span> temp_score</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>                    best_team <span class="op">=</span> temp_team.copy()</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>                    improvement <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>        current_team <span class="op">=</span> best_team</span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>    best_value <span class="op">=</span> current_team.T <span class="op">@</span> payoff_matrix <span class="op">@</span> base_optimal_counter(current_team)</span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Row-player guaranteed payoff is greater than: </span><span class="sc">{</span>best_value<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>    BestTeam <span class="op">=</span> vector_to_team(current_team)</span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Von Neumann MinMax Best team according to greedy descent strategy is:"</span>, <span class="st">', '</span>.join(BestTeam))</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> current_team</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="58ec7344" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>OptimalVector <span class="op">=</span> min_max_solution_greedy(payoff_matrix)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Row-player guaranteed payoff is greater than: -0.04
+Von Neumann MinMax Best team according to greedy descent strategy is: Devil Dinosaur, Peni Parker, Daredevil, Magik, Mantis, Ultron</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>With the solution to the min max problem found, we conclude this demonstration of how classical optimization in Von Neumann’s game theory can be applied to modern video games. Note that the solution might change as the game is to have future updates and new characters are added to the game. The solution is also dependent on the accuracy of the payoff matrix, which is based on historical data and may not reflect future matchups.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
