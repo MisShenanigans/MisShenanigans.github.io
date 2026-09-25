@@ -29,6 +29,8 @@ This arcticle is a demonstration of an undergraduate project I've done for the p
 
 Given the uniqueness of each character, the selection of roaster becomes an important factor in determining the outcome of a match (asides from obvious factors like player skill). The goal of this demo is to demonstrate This project is to model how a clssical optinmization in Von Neumann's game theory can be applied to modern video games.
 
+![](game_screenshot.png){width=1000px}
+
 ```{python}
 # Load Libaries
 import numpy as np
