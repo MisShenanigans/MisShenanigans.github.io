@@ -13,11 +13,15 @@ pyodide:
     - scipy
     - matplotlib
     - cvxpy-base
+  resources:
+    - https://raw.githubusercontent.com/MisShenanigans/Optimal_Rivalry/main/MarvelRivals_WinRate_Matrix.csv
+    - https://raw.githubusercontent.com/MisShenanigans/Optimal_Rivalry/main/MarvelRivals_NumMatches_Matrix.csv
   cell-options:
     autorun: false
     max-lines: 20
     timelimit: 90
 ---
+
 
 # Marvel Rivals Team Optimization
 
@@ -39,6 +43,7 @@ from itertools import combinations
 from scipy.stats import gaussian_kde
 import matplotlib.pyplot as plt
 ```
+
 
 ## Data Collection
 
@@ -78,6 +83,7 @@ payoff_values = np.array([utilities[rate] for rate in win_rates]).reshape(WinRat
 Payoff_df = pd.DataFrame(payoff_values, index=WinRate_df.index, columns=WinRate_df.columns)
 ```
 
+
 The Payoff Matrix is a normalized to be normally distributed with a mean of 0 and distributed between -1 and 1. The normalization is done to ensure that the optimization problem is well-defined and to avoid numerical instability. The Payoff Matrix will be used to find the optimal strategy for each player in the game. The KDE should look like a bell curve with the peak at the mean of 0 and the tails extending in both directions:
 
 ```{python}
@@ -101,6 +107,7 @@ ax.legend()
 
 plt.show()
 ```
+
 
 ## Introduction to the Problem
 
@@ -164,6 +171,7 @@ RandomTeam = ["Magneto", "Doctor Strange", "The Punisher", "Scarlet Witch", "Clo
 TankHealder = ["Thor", "Angela", "Loki", "Rogue", "Gambit", "Magneto"]
 ```
 
+
 For example, if an opponent team consists the Avengers, and our team consists of the X-Men, the outcome of the utility function $x^\top A y$ will be the total matchup score of our team against the opponent's team. The goal is to find the optimal selection of heroes for our team that maximizes this score.
 
 ```{python}
@@ -172,6 +180,7 @@ columnPlayer = team_to_vector(Avengers)
 result = rowPlayer.T @ payoff_matrix @ columnPlayer
 result
 ```
+
 
 3.02 is a positive score, which means that the X-Men team is expected to have an advantage over the Avengers team in a matchup. The higher the score, the better our team's performance against the opponent's team.
 
@@ -213,6 +222,7 @@ def base_optimal_counter_info(opponent_team):
     return x.value
 ```
 
+
 When the opponent team is the Avengers, the optimal team selection is:
 
 ```{python}
@@ -221,6 +231,7 @@ y = team_to_vector(OpponentTeam)
 print("Best Conter to the Avengers is:")
 OpponentTeamConter = base_optimal_counter_info(y)
 ```
+
 
 ## Optimal Solution to Von Neumann Min Max Equation
 
@@ -296,6 +307,7 @@ def optimal_maximin_team(payoff_matrix, hero_list):
 OptimalVector = optimal_maximin_team(payoff_matrix, hero_list)
 ```
 
+
 ## Conclusion
 
 With the solution to the min max problem found, we conclude this demonstration of how classical optimization in Von Neumann's game theory can be applied to modern video games. Note that the solution might change as the game is to have future updates and new characters are added to the game. The solution is also dependent on the accuracy of the payoff matrix, which is based on historical data and may not reflect future matchups.
@@ -350,6 +362,7 @@ A = np.array([utility[r] for r in rates]).reshape(rates_df.shape)
 print(f"Ready: {len(heroes)} heroes. Run an experiment below.")
 print("Available heroes:\n" + ", ".join(heroes))
 ```
+
 
 ### Find a counter-team
 

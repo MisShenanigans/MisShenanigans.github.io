@@ -5,7 +5,7 @@ about:
   image: images/pic_of_me.jpg
 ---
 
-a picture of me:
+a picture of me: 
 
 ![](images/pic_of_me.jpeg){width=250px}
 

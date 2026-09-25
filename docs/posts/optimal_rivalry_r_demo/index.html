@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Mishenanigans">
+<meta name="dcterms.date" content="2026-09-24">
+
+<title>Optimal Rivalry: R Demo – MisShenanigans</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-445b8638c3d06994fee0907d791121c4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/live-runtime/live-runtime.js" type="module"></script>
+<link href="../../site_libs/quarto-contrib/live-runtime/live-runtime.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script type="module" src="../../site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
+<link href="../../site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">MisShenanigans</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#marvel-rivals-team-optimization" id="toc-marvel-rivals-team-optimization" class="nav-link active" data-scroll-target="#marvel-rivals-team-optimization">Marvel Rivals Team Optimization</a>
+  <ul class="collapse">
+  <li><a href="#data-collection" id="toc-data-collection" class="nav-link" data-scroll-target="#data-collection">Data Collection</a>
+  <ul class="collapse">
+  <li><a href="#visualizing-the-kde" id="toc-visualizing-the-kde" class="nav-link" data-scroll-target="#visualizing-the-kde">Visualizing the KDE</a></li>
+  </ul></li>
+  <li><a href="#introduction-to-the-problem" id="toc-introduction-to-the-problem" class="nav-link" data-scroll-target="#introduction-to-the-problem">Introduction to the Problem</a>
+  <ul class="collapse">
+  <li><a href="#problem-setup" id="toc-problem-setup" class="nav-link" data-scroll-target="#problem-setup">Problem Setup</a></li>
+  <li><a href="#optimization-objective" id="toc-optimization-objective" class="nav-link" data-scroll-target="#optimization-objective">Optimization Objective</a></li>
+  <li><a href="#optimal-team-selection" id="toc-optimal-team-selection" class="nav-link" data-scroll-target="#optimal-team-selection">Optimal Team Selection:</a></li>
+  </ul></li>
+  <li><a href="#optimal-solution-to-von-neumann-min-max-equation" id="toc-optimal-solution-to-von-neumann-min-max-equation" class="nav-link" data-scroll-target="#optimal-solution-to-von-neumann-min-max-equation">Optimal Solution to Von Neumann Min Max Equation</a>
+  <ul class="collapse">
+  <li><a href="#the-minimax-formulation" id="toc-the-minimax-formulation" class="nav-link" data-scroll-target="#the-minimax-formulation">The Minimax Formulation</a></li>
+  <li><a href="#why-minimax" id="toc-why-minimax" class="nav-link" data-scroll-target="#why-minimax">Why Minimax?</a></li>
+  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#try-it-yourself" id="toc-try-it-yourself" class="nav-link" data-scroll-target="#try-it-yourself">Try it yourself</a>
+  <ul class="collapse">
+  <li><a href="#load-the-matchup-data" id="toc-load-the-matchup-data" class="nav-link" data-scroll-target="#load-the-matchup-data">Load the matchup data</a></li>
+  <li><a href="#find-a-counter-team" id="toc-find-a-counter-team" class="nav-link" data-scroll-target="#find-a-counter-team">Find a counter-team</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Optimal Rivalry: R Demo</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Mishenanigans </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 24, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="marvel-rivals-team-optimization" class="level1">
+<h1>Marvel Rivals Team Optimization</h1>
+<p>This arcticle is a demonstration of an undergraduate project I’ve done for the popular video game Marvel Rivals. Before I go into the details of the project, I want to give a brief overview of the game itself in case you are not already familiar with it. <a href="https://www.marvelrivals.com/">Marvel Rivals</a> is a 6v6 team-based fighting game where players can choose from a roster of over 50+ Marvel characters to form a team and battle against other players.</p>
+<p>Given the uniqueness of each character, the selection of roaster becomes an important factor in determining the outcome of a match (asides from obvious factors like player skill). The goal of this demo is to demonstrate This project is to model how a clssical optinmization in Von Neumann’s game theory can be applied to modern video games.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lpSolve)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="data-collection" class="level2">
+<h2 class="anchored" data-anchor-id="data-collection">Data Collection</h2>
+<p>This project will mostly be using two dataset from the GitHub repository <a href="https://github.com/MisShenanigans/Optimal_Rivalry">Optimal_Rivalry</a> which was made by… well me, the author of this article and a few classmates in her undergraduate years. We will primarily be using two datasets from the repository (both were scrapped from a third-party website <a href="https://rivalsmeta.com/">RivalsMeta</a>):</p>
+<ul>
+<li><a href="https://github.com/MisShenanigans/Optimal_Rivalry/blob/main/MarvelRivals_NumMatches_Matrix.csv">MarvelRivals_NumMatches_Matrix.csv</a>: This is a matrixized dataset that contains the number of matches played between each pair of characters in the game. The rows and columns of the matrix represent the characters, and the values in the matrix represent the number of matches played between each pair of characters. This dataset will be used to calculate the win rates between each pair of characters.</li>
+<li><a href="https://github.com/MisShenanigans/Optimal_Rivalry/blob/main/MarvelRivals_WinRate_Matrix.csv">MarvelRivals_WinRate_Matrix.csv</a>: This is a matrixized dataset that contains the win rates of each pair of characters in the game. The rows and columns of the matrix represent the characters, and the values in the matrix represent the win rate of each pair of characters. This dataset will be used to analyze the performance of different character combinations.</li>
+</ul>
+<p>From there we will construct a Payoff Matrix using a Gaussian Kernel Density Estimation technique to estimate the win rates between each pair of characters. The Payoff Matrix will be the basis of a classical optimization problem in Von Neumann’s game theory.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>base_url <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/MisShenanigans/Optimal_Rivalry/main/"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>read_matrix <span class="ot">&lt;-</span> <span class="cf">function</span>(filename) {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>(<span class="fu">read.csv</span>(<span class="fu">paste0</span>(base_url, filename), <span class="at">row.names =</span> <span class="dv">1</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">check.names =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>win_rate_matrix <span class="ot">&lt;-</span> <span class="fu">read_matrix</span>(<span class="st">"MarvelRivals_WinRate_Matrix.csv"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>match_count_matrix <span class="ot">&lt;-</span> <span class="fu">read_matrix</span>(<span class="st">"MarvelRivals_NumMatches_Matrix.csv"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>heroes <span class="ot">&lt;-</span> <span class="fu">rownames</span>(win_rate_matrix)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="sc">!</span><span class="fu">anyDuplicated</span>(heroes), <span class="fu">length</span>(heroes) <span class="sc">&gt;=</span> <span class="dv">6</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>          <span class="fu">setequal</span>(heroes, <span class="fu">colnames</span>(win_rate_matrix)),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>          <span class="fu">setequal</span>(heroes, <span class="fu">rownames</span>(match_count_matrix)),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>          <span class="fu">setequal</span>(heroes, <span class="fu">colnames</span>(match_count_matrix)))</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>win_rate_matrix <span class="ot">&lt;-</span> win_rate_matrix[heroes, heroes]</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>match_count_matrix <span class="ot">&lt;-</span> match_count_matrix[heroes, heroes]</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">is.finite</span>(win_rate_matrix)),</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>          <span class="fu">all</span>(win_rate_matrix <span class="sc">&gt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> win_rate_matrix <span class="sc">&lt;=</span> <span class="dv">100</span>),</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>          <span class="fu">all</span>(<span class="fu">is.finite</span>(match_count_matrix)), <span class="fu">all</span>(match_count_matrix <span class="sc">&gt;</span> <span class="dv">0</span>))</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">"Downloaded and aligned both matrices by hero name."</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Win-rate matrix:"</span>, <span class="fu">dim</span>(win_rate_matrix), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Win-rate matrix: 56 56 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Match-count matrix:"</span>, <span class="fu">dim</span>(match_count_matrix), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Match-count matrix: 56 56 </code></pre>
+</div>
+</div>
+<p>The data currently contain 56 heroes.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>weighted_kde <span class="ot">&lt;-</span> <span class="cf">function</span>(values, weights) {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">length</span>(values) <span class="sc">==</span> <span class="fu">length</span>(weights), <span class="fu">length</span>(values) <span class="sc">&gt;</span> <span class="dv">1</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">all</span>(<span class="fu">is.finite</span>(values)), <span class="fu">all</span>(<span class="fu">is.finite</span>(weights)),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">all</span>(weights <span class="sc">&gt;</span> <span class="dv">0</span>), <span class="fu">length</span>(<span class="fu">unique</span>(values)) <span class="sc">&gt;</span> <span class="dv">1</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> weights <span class="sc">/</span> <span class="fu">sum</span>(weights)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  mean_value <span class="ot">&lt;-</span> <span class="fu">sum</span>(p <span class="sc">*</span> values)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  effective_n <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> <span class="fu">sum</span>(p<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  variance <span class="ot">&lt;-</span> <span class="fu">sum</span>(p <span class="sc">*</span> (values <span class="sc">-</span> mean_value)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">sum</span>(p<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  bandwidth <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(variance) <span class="sc">*</span> effective_n<span class="sc">^</span>(<span class="sc">-</span><span class="dv">1</span> <span class="sc">/</span> <span class="dv">5</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Combine identical rates after calculating the original weighted variance.</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  rates <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(values))</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  masses <span class="ot">&lt;-</span> <span class="fu">vapply</span>(rates, <span class="cf">function</span>(rate) <span class="fu">sum</span>(p[values <span class="sc">==</span> rate]), <span class="fu">numeric</span>(<span class="dv">1</span>))</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">bandwidth =</span> bandwidth,</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">density =</span> <span class="cf">function</span>(points) <span class="fu">vapply</span>(points, <span class="cf">function</span>(point) {</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sum</span>(masses <span class="sc">*</span> <span class="fu">dnorm</span>(point, <span class="at">mean =</span> rates, <span class="at">sd =</span> bandwidth))</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    }, <span class="fu">numeric</span>(<span class="dv">1</span>)),</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">integral =</span> <span class="cf">function</span>(lower, upper) {</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sum</span>(masses <span class="sc">*</span> (<span class="fu">pnorm</span>(upper, rates, bandwidth) <span class="sc">-</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">pnorm</span>(lower, rates, bandwidth)))</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>win_rates <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(win_rate_matrix)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>num_matches <span class="ot">&lt;-</span> <span class="fu">as.vector</span>(match_count_matrix)</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>kde <span class="ot">&lt;-</span> <span class="fu">weighted_kde</span>(win_rates, num_matches)</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>low <span class="ot">&lt;-</span> <span class="fu">min</span>(win_rates)</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>high <span class="ot">&lt;-</span> <span class="fu">max</span>(win_rates)</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>total_mass <span class="ot">&lt;-</span> kde<span class="sc">$</span><span class="fu">integral</span>(low, high)</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>unique_rates <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(win_rates))</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>utilities <span class="ot">&lt;-</span> <span class="fu">vapply</span>(unique_rates, <span class="cf">function</span>(rate) {</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">2</span> <span class="sc">*</span> kde<span class="sc">$</span><span class="fu">integral</span>(low, rate) <span class="sc">/</span> total_mass <span class="sc">-</span> <span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>}, <span class="fu">numeric</span>(<span class="dv">1</span>))</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(utilities[<span class="fu">match</span>(win_rates, unique_rates)],</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>            <span class="at">nrow =</span> <span class="fu">length</span>(heroes), <span class="at">dimnames =</span> <span class="fu">list</span>(heroes, heroes))</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Win-rate range: %.2f%% to %.2f%%; KDE mass: %.6f</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>            low, high, total_mass))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Win-rate range: 25.12% to 74.88%; KDE mass: 0.999893</code></pre>
+</div>
+</div>
+<p>The Payoff Matrix is a normalized to be normally distributed with a mean of 0 and distributed between -1 and 1. The normalization is done to ensure that the optimization problem is well-defined and to avoid numerical instability. The Payoff Matrix will be used to find the optimal strategy for each player in the game. The KDE should look like a bell curve with the peak at the mean of 0 and the tails extending in both directions:</p>
+<section id="visualizing-the-kde" class="level3">
+<h3 class="anchored" data-anchor-id="visualizing-the-kde">Visualizing the KDE</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>breaks <span class="ot">&lt;-</span> <span class="fu">seq</span>(low, high, <span class="at">length.out =</span> <span class="dv">26</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>bin <span class="ot">&lt;-</span> <span class="fu">findInterval</span>(win_rates, breaks, <span class="at">all.inside =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>bin_weight <span class="ot">&lt;-</span> <span class="fu">vapply</span>(<span class="fu">seq_len</span>(<span class="dv">25</span>), <span class="cf">function</span>(i) {</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>(num_matches[bin <span class="sc">==</span> i])</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>}, <span class="fu">numeric</span>(<span class="dv">1</span>))</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>hist_density <span class="ot">&lt;-</span> bin_weight <span class="sc">/</span> (<span class="fu">sum</span>(num_matches) <span class="sc">*</span> <span class="fu">diff</span>(breaks))</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>x_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(low <span class="sc">-</span> <span class="dv">3</span> <span class="sc">*</span> kde<span class="sc">$</span>bandwidth, high <span class="sc">+</span> <span class="dv">3</span> <span class="sc">*</span> kde<span class="sc">$</span>bandwidth,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">length.out =</span> <span class="dv">600</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>y_grid <span class="ot">&lt;-</span> kde<span class="sc">$</span><span class="fu">density</span>(x_grid)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x_grid, y_grid, <span class="at">type =</span> <span class="st">"n"</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">max</span>(hist_density, y_grid) <span class="sc">*</span> <span class="fl">1.08</span>),</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Win Rate Distribution with Weighted Gaussian KDE"</span>,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Win Rate (%)"</span>, <span class="at">ylab =</span> <span class="st">"Density (Weighted by Matches)"</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col =</span> <span class="st">"grey80"</span>, <span class="at">lty =</span> <span class="st">"dashed"</span>)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="fu">rect</span>(<span class="fu">head</span>(breaks, <span class="sc">-</span><span class="dv">1</span>), <span class="dv">0</span>, <span class="fu">tail</span>(breaks, <span class="sc">-</span><span class="dv">1</span>), hist_density,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="fu">adjustcolor</span>(<span class="st">"#39accb"</span>, <span class="at">alpha.f =</span> <span class="fl">0.8</span>), <span class="at">border =</span> <span class="st">"#34454f"</span>)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x_grid, y_grid, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="fu">c</span>(<span class="st">"Weighted Histogram"</span>, <span class="st">"Weighted Gaussian KDE"</span>),</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">pch =</span> <span class="fu">c</span>(<span class="dv">15</span>, <span class="cn">NA</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"#39accb"</span>, <span class="st">"red"</span>),</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">lwd =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2</span>), <span class="at">pt.cex =</span> <span class="dv">2</span>, <span class="at">bg =</span> <span class="st">"white"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-r-weighted-win-rate-kde" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-r-weighted-win-rate-kde-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-r-weighted-win-rate-kde-1.png" class="img-fluid figure-img" width="960">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-r-weighted-win-rate-kde-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Match-count-weighted distribution of matchup win rates with a Gaussian KDE curve, calculated in R.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="introduction-to-the-problem" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-to-the-problem">Introduction to the Problem</h2>
+<p>Given a known opponent team, how can we choose six heroes to maximize our team’s matchup score? We model this as a binary optimization problem inspired by game theory.</p>
+<section id="problem-setup" class="level3">
+<h3 class="anchored" data-anchor-id="problem-setup">Problem Setup</h3>
+<ul>
+<li>Let <span class="math inline">\(x \in \{0,1\}^{56}\)</span> represent our team, the row player’s selection. Each entry equals 1 if the corresponding hero is selected and 0 otherwise.</li>
+<li>Let <span class="math inline">\(y \in \{0,1\}^{56}\)</span> represent the opponent’s team, the column player’s selection. For this problem, <span class="math inline">\(y\)</span> is fixed and known.</li>
+<li>Each team contains exactly six heroes.</li>
+<li>Let <span class="math inline">\(A \in \mathbb{R}^{56 \times 56}\)</span> be the payoff matrix, where <span class="math inline">\(A_{ij}\)</span> measures the matchup score of our hero <span class="math inline">\(i\)</span> against the opponent’s hero <span class="math inline">\(j\)</span>.</li>
+</ul>
+<p>Our team’s total matchup score is <span class="math inline">\(x^\top A y\)</span>, which adds the scores across all pairs of selected heroes.</p>
+</section>
+<section id="optimization-objective" class="level3">
+<h3 class="anchored" data-anchor-id="optimization-objective">Optimization Objective</h3>
+<p>We choose <span class="math inline">\(x\)</span> to solve:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\max_{x \in \{0,1\}^{56}} \quad &amp; x^\top A y \\
+\text{subject to} \quad &amp; \sum_{i=1}^{56} x_i = 6.
+\end{aligned}
+\]</span></p>
+<p>The opponent’s fixed team also satisfies:</p>
+<p><span class="math display">\[
+y \in \{0,1\}^{56},
+\qquad
+\sum_{i=1}^{56} y_i = 6.
+\]</span></p>
+<p>Next, we define helper functions to convert between hero names and binary team vectors, along with example teams for both players.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>team_size <span class="ot">&lt;-</span> <span class="dv">6</span>L</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(heroes)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>team_to_vector <span class="ot">&lt;-</span> <span class="cf">function</span>(team) {</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(team) <span class="sc">!=</span> team_size <span class="sc">||</span> <span class="fu">anyDuplicated</span>(team) <span class="sc">||</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>      <span class="sc">!</span><span class="fu">all</span>(team <span class="sc">%in%</span> heroes)) {</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Choose exactly six distinct, valid hero names."</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.integer</span>(heroes <span class="sc">%in%</span> team)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>vector_to_team <span class="ot">&lt;-</span> <span class="cf">function</span>(x) heroes[x <span class="sc">&gt;</span> <span class="fl">0.5</span>]</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>Avengers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Black Widow"</span>, <span class="st">"Iron Man"</span>, <span class="st">"Thor"</span>, <span class="st">"Hulk"</span>, <span class="st">"Hawkeye"</span>,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Captain America"</span>)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>Xmen <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Magneto"</span>, <span class="st">"Psylocke"</span>, <span class="st">"Wolverine"</span>, <span class="st">"Magik"</span>, <span class="st">"Storm"</span>, <span class="st">"Emma Frost"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>For example, if an opponent team consists the Avengers, and our team consists of the X-Men, the outcome of the utility function <span class="math inline">\(x^\top A y\)</span> will be the total matchup score of our team against the opponent’s team. The goal is to find the optimal selection of heroes for our team that maximizes this score.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">team_to_vector</span>(Xmen)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">team_to_vector</span>(Avengers)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>example_score <span class="ot">&lt;-</span> <span class="fu">drop</span>(<span class="fu">t</span>(x) <span class="sc">%*%</span> A <span class="sc">%*%</span> y)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"X-Men versus Avengers model score: %.2f</span><span class="sc">\n</span><span class="st">"</span>, example_score))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>X-Men versus Avengers model score: 3.02</code></pre>
+</div>
+</div>
+<p>3.02 is a positive score, which means that the X-Men team is expected to have an advantage over the Avengers team in a matchup. The higher the score, the better our team’s performance against the opponent’s team.</p>
+</section>
+<section id="optimal-team-selection" class="level3">
+<h3 class="anchored" data-anchor-id="optimal-team-selection">Optimal Team Selection:</h3>
+<p>It turns out, when the enemy team is known, it is fairly easy to find the optimal team slelection using lpSolve. When the opponent team is the Avengers, the optimal team selection is:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>optimal_counter <span class="ot">&lt;-</span> <span class="cf">function</span>(opponent) {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">team_to_vector</span>(opponent)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  contributions <span class="ot">&lt;-</span> <span class="fu">drop</span>(A <span class="sc">%*%</span> y)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> lpSolve<span class="sc">::</span><span class="fu">lp</span>(</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">direction =</span> <span class="st">"max"</span>, <span class="at">objective.in =</span> contributions,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">const.mat =</span> <span class="fu">matrix</span>(<span class="dv">1</span>, <span class="at">nrow =</span> <span class="dv">1</span>, <span class="at">ncol =</span> n),</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">const.dir =</span> <span class="st">"="</span>, <span class="at">const.rhs =</span> team_size, <span class="at">all.bin =</span> <span class="cn">TRUE</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (fit<span class="sc">$</span>status <span class="sc">!=</span> <span class="dv">0</span>) <span class="fu">stop</span>(<span class="st">"The counter-team solver did not confirm optimality."</span>)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  chosen <span class="ot">&lt;-</span> <span class="fu">which</span>(fit<span class="sc">$</span>solution <span class="sc">&gt;</span> <span class="fl">0.5</span>)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">length</span>(chosen) <span class="sc">==</span> team_size)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">Hero =</span> heroes[chosen], <span class="at">Contribution =</span> contributions[chosen])</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>counter <span class="ot">&lt;-</span> <span class="fu">optimal_counter</span>(Avengers)</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(counter, <span class="at">digits =</span> <span class="dv">2</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>             <span class="at">caption =</span> <span class="st">"Optimal counter-team against the Avengers."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Optimal counter-team against the Avengers.</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Hero</th>
+<th style="text-align: right;">Contribution</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Devil Dinosaur</td>
+<td style="text-align: right;">3.80</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Peni Parker</td>
+<td style="text-align: right;">5.93</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Magik</td>
+<td style="text-align: right;">3.04</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Storm</td>
+<td style="text-align: right;">3.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mantis</td>
+<td style="text-align: right;">4.08</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ultron</td>
+<td style="text-align: right;">3.91</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>counter_score <span class="ot">&lt;-</span> <span class="fu">sum</span>(counter<span class="sc">$</span>Contribution)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Optimal counter-team score: %.2f</span><span class="sc">\n</span><span class="st">"</span>, counter_score))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Optimal counter-team score: 23.86</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="optimal-solution-to-von-neumann-min-max-equation" class="level2">
+<h2 class="anchored" data-anchor-id="optimal-solution-to-von-neumann-min-max-equation">Optimal Solution to Von Neumann Min Max Equation</h2>
+<p>In zero-sum games (which category this game falls into), the <strong>Von Neumann Minimax Theorem</strong> guarantees the existence of an optimal strategy that a player can adopt to <strong>maximize their worst-case outcome</strong>, regardless of what the opponent chooses.</p>
+<hr>
+<section id="the-minimax-formulation" class="level3">
+<h3 class="anchored" data-anchor-id="the-minimax-formulation">The Minimax Formulation</h3>
+<p>Let <code>A</code> be the <strong>payoff matrix</strong>, where each entry <code>A[i, j]</code> represents how well hero <em>i</em> performs against hero <em>j</em>. Then the minimax objective is:</p>
+<p><span class="math display">\[
+\max_{\mathbf{x}} \ \min_{\mathbf{y}} \ \mathbf{x}^T A \mathbf{y}
+\]</span></p>
+<ul>
+<li><code>x</code> is our strategy (a 6-hero team, encoded as a binary vector of length 56)</li>
+<li><code>y</code> is the opponent’s strategy (also a 6-hero team)</li>
+<li>The game is <strong>zero-sum</strong>, meaning if we gain, the opponent loses equally.</li>
+</ul>
+<p>This equation models the idea:<br>
+&gt; What is the best team we can pick <strong>assuming the opponent will counter us in the worst way possible</strong>?</p>
+<hr>
+</section>
+<section id="why-minimax" class="level3">
+<h3 class="anchored" data-anchor-id="why-minimax">Why Minimax?</h3>
+<p>Unlike the base counter strategy (which assumes the opponent team is known), this problem assumes <strong>we don’t know the opponent’s team</strong>, and instead optimize for the <strong>safest possible team</strong>, one that performs reliably across the board. This is especially useful for a team of new players who has no idea about the game.</p>
+</section>
+<section id="implementation" class="level3">
+<h3 class="anchored" data-anchor-id="implementation">Implementation</h3>
+<p>And it turns out, the solution to the Min Max Question can be found relatively using sum_smallest() from CVXPY.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>optimal_maximin <span class="ot">&lt;-</span> <span class="cf">function</span>(A, <span class="at">team_size =</span> <span class="dv">6</span>L) {</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(A)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  B <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span> A)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Variable order: x[1:n], t_plus, t_minus, s[1:n].</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  objective <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">0</span>, n), team_size, <span class="sc">-</span>team_size, <span class="fu">rep</span>(<span class="sc">-</span><span class="dv">1</span>, n))</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  constraints <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, n), <span class="dv">0</span>, <span class="dv">0</span>, <span class="fu">rep</span>(<span class="dv">0</span>, n)),</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cbind</span>(<span class="fu">t</span>(B), <span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="fu">diag</span>(n))</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> lpSolve<span class="sc">::</span><span class="fu">lp</span>(</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">direction =</span> <span class="st">"max"</span>, <span class="at">objective.in =</span> objective,</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">const.mat =</span> constraints,</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">const.dir =</span> <span class="fu">c</span>(<span class="st">"="</span>, <span class="fu">rep</span>(<span class="st">"&gt;="</span>, n)),</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">const.rhs =</span> <span class="fu">c</span>(team_size, <span class="fu">rep</span>(<span class="dv">0</span>, n)),</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">binary.vec =</span> <span class="fu">seq_len</span>(n)</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (fit<span class="sc">$</span>status <span class="sc">!=</span> <span class="dv">0</span>) <span class="fu">stop</span>(<span class="st">"The maximin solver did not confirm optimality."</span>)</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>  selected <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(fit<span class="sc">$</span>solution[<span class="fu">seq_len</span>(n)] <span class="sc">&gt;</span> <span class="fl">0.5</span>)</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">sum</span>(selected) <span class="sc">==</span> team_size)</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  opponent_scores <span class="ot">&lt;-</span> <span class="fu">drop</span>(<span class="fu">t</span>(A) <span class="sc">%*%</span> selected)</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  worst <span class="ot">&lt;-</span> <span class="fu">order</span>(opponent_scores, <span class="fu">colnames</span>(A))[<span class="fu">seq_len</span>(team_size)]</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>  guaranteed <span class="ot">&lt;-</span> <span class="fu">sum</span>(opponent_scores[worst])</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">abs</span>(guaranteed <span class="sc">-</span> fit<span class="sc">$</span>objval <span class="sc">/</span> <span class="dv">100</span>) <span class="sc">&lt;</span> <span class="fl">1e-6</span>)</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">team =</span> <span class="fu">rownames</span>(A)[selected <span class="sc">==</span> <span class="dv">1</span>],</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>       <span class="at">opponent =</span> <span class="fu">colnames</span>(A)[worst], <span class="at">score =</span> guaranteed)</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>maximin <span class="ot">&lt;-</span> <span class="fu">optimal_maximin</span>(A)</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Optimal team:"</span>, <span class="fu">paste</span>(maximin<span class="sc">$</span>team, <span class="at">collapse =</span> <span class="st">", "</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Optimal team: Devil Dinosaur, Peni Parker, Daredevil, Magik, Mantis, Ultron </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Worst-case opponent:"</span>, <span class="fu">paste</span>(maximin<span class="sc">$</span>opponent, <span class="at">collapse =</span> <span class="st">", "</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Worst-case opponent: Peni Parker, Mantis, Magik, Ultron, Devil Dinosaur, Captain America </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Guaranteed model score: %.2f</span><span class="sc">\n</span><span class="st">"</span>, maximin<span class="sc">$</span>score))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Guaranteed model score: -0.04</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>With the solution to the min max problem found, we conclude this demonstration of how classical optimization in Von Neumann’s game theory can be applied to modern video games. Note that the solution might change as the game is to have future updates and new characters are added to the game. The solution is also dependent on the accuracy of the payoff matrix, which is based on historical data and may not reflect future matchups.</p>
+</section>
+<section id="try-it-yourself" class="level2">
+<h2 class="anchored" data-anchor-id="try-it-yourself">Try it yourself</h2>
+<p>Edit the Python code below and click <strong>Run Code</strong> to explore the model. First run <strong>Load the matchup data</strong>, then try any of the three experiments. The first visit may take a little while to load Python and its packages; an internet connection is needed to load the data. Your edits affect your browser session only.</p>
+<p>Use <strong>Start Over</strong> on a code block to restore its original code. To reset all variables as well, reload the page and run the data-loading block again.</p>
+<section id="load-the-matchup-data" class="level3">
+<h3 class="anchored" data-anchor-id="load-the-matchup-data">Load the matchup data</h3>
+<p>This loads the same source matrices used above and recreates the payoff matrix. The list of hero names in the output is available for copying into your teams.</p>
+<div class="cell" data-caption="Load the matchup data — run this first">
+<div>
+<div id="webr-1" class="exercise-cell">
+
+</div>
+<script type="webr-1-contents">
+eyJhdHRyIjp7ImF1dG9ydW4iOmZhbHNlLCJjYXB0aW9uIjoiTG9hZCB0aGUgbWF0Y2h1cCBkYXRhIOKAlCBydW4gdGhpcyBmaXJzdCIsImVkaXQiOnRydWUsImV2YWwiOnRydWUsImxhYmVsIjoici1wbGF5Z3JvdW5kLWRhdGEiLCJtYXgtbGluZXMiOiIyMCIsInRpbWVsaW1pdCI6IjkwIn0sImNvZGUiOiJyYXRlcyA8LSBhcy5tYXRyaXgocmVhZC5jc3YoXCJNYXJ2ZWxSaXZhbHNfV2luUmF0ZV9NYXRyaXguY3N2XCIsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgcm93Lm5hbWVzID0gMSwgY2hlY2submFtZXMgPSBGQUxTRSkpXG5jb3VudHMgPC0gYXMubWF0cml4KHJlYWQuY3N2KFwiTWFydmVsUml2YWxzX051bU1hdGNoZXNfTWF0cml4LmNzdlwiLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICByb3cubmFtZXMgPSAxLCBjaGVjay5uYW1lcyA9IEZBTFNFKSlcbmhlcm9lcyA8LSByb3duYW1lcyhyYXRlcylcbnN0b3BpZm5vdCghYW55RHVwbGljYXRlZChoZXJvZXMpLCBsZW5ndGgoaGVyb2VzKSA+PSA2LFxuICAgICAgICAgIHNldGVxdWFsKGhlcm9lcywgY29sbmFtZXMocmF0ZXMpKSxcbiAgICAgICAgICBzZXRlcXVhbChoZXJvZXMsIHJvd25hbWVzKGNvdW50cykpLFxuICAgICAgICAgIHNldGVxdWFsKGhlcm9lcywgY29sbmFtZXMoY291bnRzKSkpXG5yYXRlcyA8LSByYXRlc1toZXJvZXMsIGhlcm9lc11cbmNvdW50cyA8LSBjb3VudHNbaGVyb2VzLCBoZXJvZXNdXG5zdG9waWZub3QoYWxsKGlzLmZpbml0ZShyYXRlcykpLCBhbGwocmF0ZXMgPj0gMCAmIHJhdGVzIDw9IDEwMCksXG4gICAgICAgICAgYWxsKGlzLmZpbml0ZShjb3VudHMpKSwgYWxsKGNvdW50cyA+IDApKVxuXG52YWx1ZXMgPC0gYXMudmVjdG9yKHJhdGVzKVxucCA8LSBhcy52ZWN0b3IoY291bnRzKSAvIHN1bShjb3VudHMpXG5lZmZlY3RpdmVfbiA8LSAxIC8gc3VtKHBeMilcbnZhcmlhbmNlIDwtIHN1bShwICogKHZhbHVlcyAtIHN1bShwICogdmFsdWVzKSleMikgLyAoMSAtIHN1bShwXjIpKVxuYmFuZHdpZHRoIDwtIHNxcnQodmFyaWFuY2UpICogZWZmZWN0aXZlX25eKC0xIC8gNSlcbnN0b3BpZm5vdChpcy5maW5pdGUoYmFuZHdpZHRoKSwgYmFuZHdpZHRoID4gMClcbmxvdyA8LSBtaW4odmFsdWVzKVxuaGlnaCA8LSBtYXgodmFsdWVzKVxuaW50ZWdyYWwgPC0gZnVuY3Rpb24odXBwZXIpIHtcbiAgc3VtKHAgKiAocG5vcm0odXBwZXIsIHZhbHVlcywgYmFuZHdpZHRoKSAtIHBub3JtKGxvdywgdmFsdWVzLCBiYW5kd2lkdGgpKSlcbn1cbnRvdGFsX21hc3MgPC0gaW50ZWdyYWwoaGlnaClcbnVuaXF1ZV9yYXRlcyA8LSBzb3J0KHVuaXF1ZSh2YWx1ZXMpKVxudXRpbGl0aWVzIDwtIHZhcHBseSh1bmlxdWVfcmF0ZXMsIGZ1bmN0aW9uKHJhdGUpIHtcbiAgcm91bmQoMiAqIGludGVncmFsKHJhdGUpIC8gdG90YWxfbWFzcyAtIDEsIDIpXG59LCBudW1lcmljKDEpKVxuQSA8LSBtYXRyaXgodXRpbGl0aWVzW21hdGNoKHZhbHVlcywgdW5pcXVlX3JhdGVzKV0sXG4gICAgICAgICAgICBucm93ID0gbGVuZ3RoKGhlcm9lcyksIGRpbW5hbWVzID0gbGlzdChoZXJvZXMsIGhlcm9lcykpXG5jYXQoXCJSZWFkeTpcIiwgbGVuZ3RoKGhlcm9lcyksIFwiaGVyb2VzLiBSdW4gdGhlIGNvdW50ZXItdGVhbSBibG9jayBiZWxvdy5cXG5cIilcbmNhdChcIkF2YWlsYWJsZSBoZXJvZXM6XFxuXCIsIHBhc3RlKGhlcm9lcywgY29sbGFwc2UgPSBcIiwgXCIpLCBcIlxcblwiKSJ9
+</script>
+</div>
+</div>
+</section>
+<section id="find-a-counter-team" class="level3">
+<h3 class="anchored" data-anchor-id="find-a-counter-team">Find a counter-team</h3>
+<p>Change the six names in <code>opponent</code>. You can exclude heroes from your own team with <code>unavailable</code>. Sorting the individual contributions gives the exact best response for this additive model.</p>
+<div class="cell" data-caption="Change the opponent and find a counter-team">
+<div>
+<div id="webr-2" class="exercise-cell">
+
+</div>
+<script type="webr-2-contents">
+eyJhdHRyIjp7ImF1dG9ydW4iOmZhbHNlLCJjYXB0aW9uIjoiQ2hhbmdlIHRoZSBvcHBvbmVudCBhbmQgZmluZCBhIGNvdW50ZXItdGVhbSIsImVkaXQiOnRydWUsImV2YWwiOnRydWUsImxhYmVsIjoici1wbGF5Z3JvdW5kLWNvdW50ZXIiLCJtYXgtbGluZXMiOiIyMCIsInRpbWVsaW1pdCI6IjkwIn0sImNvZGUiOiJvcHBvbmVudCA8LSBjKFwiQmxhY2sgV2lkb3dcIiwgXCJJcm9uIE1hblwiLCBcIlRob3JcIiwgXCJIdWxrXCIsIFwiSGF3a2V5ZVwiLFxuICAgICAgICAgICAgICBcIkNhcHRhaW4gQW1lcmljYVwiKVxudW5hdmFpbGFibGUgPC0gY2hhcmFjdGVyKDApICAjIFRyeSBjKFwiTG9raVwiLCBcIk1hbnRpc1wiKVxudGVhbV9zaXplIDwtIDZMXG5cbmlmICghZXhpc3RzKFwiQVwiKSkgc3RvcChcIlJ1biAnTG9hZCB0aGUgbWF0Y2h1cCBkYXRhJyBmaXJzdC5cIilcbmlmICghaXMubnVtZXJpYyh0ZWFtX3NpemUpIHx8IGxlbmd0aCh0ZWFtX3NpemUpICE9IDEgfHxcbiAgICAhaXMuZmluaXRlKHRlYW1fc2l6ZSkgfHwgdGVhbV9zaXplICE9IGZsb29yKHRlYW1fc2l6ZSkgfHxcbiAgICB0ZWFtX3NpemUgPCAxIHx8IHRlYW1fc2l6ZSA+IGxlbmd0aChoZXJvZXMpKSB7XG4gIHN0b3AoXCJ0ZWFtX3NpemUgbXVzdCBiZSBhbiBpbnRlZ2VyIGJldHdlZW4gMSBhbmQgdGhlIG51bWJlciBvZiBoZXJvZXMuXCIpXG59XG51bmtub3duIDwtIHNldGRpZmYoYyhvcHBvbmVudCwgdW5hdmFpbGFibGUpLCBoZXJvZXMpXG5pZiAobGVuZ3RoKHVua25vd24pKSBzdG9wKFwiVW5rbm93biBoZXJvIG5hbWVzOiBcIiwgcGFzdGUodW5rbm93biwgY29sbGFwc2UgPSBcIiwgXCIpKVxuaWYgKGxlbmd0aChvcHBvbmVudCkgIT0gdGVhbV9zaXplIHx8IGFueUR1cGxpY2F0ZWQob3Bwb25lbnQpKSB7XG4gIHN0b3AoXCJDaG9vc2UgZXhhY3RseSB0ZWFtX3NpemUgZGlzdGluY3Qgb3Bwb25lbnQgaGVyb2VzLlwiKVxufVxueSA8LSBhcy5pbnRlZ2VyKGhlcm9lcyAlaW4lIG9wcG9uZW50KVxuc2NvcmVzIDwtIGRyb3AoQSAlKiUgeSlcbmVsaWdpYmxlIDwtIHdoaWNoKCFoZXJvZXMgJWluJSB1bmF2YWlsYWJsZSlcbmlmIChsZW5ndGgoZWxpZ2libGUpIDwgdGVhbV9zaXplKSBzdG9wKFwiTm90IGVub3VnaCBoZXJvZXMgYXJlIGF2YWlsYWJsZS5cIilcbmNob3NlbiA8LSBlbGlnaWJsZVtvcmRlcigtc2NvcmVzW2VsaWdpYmxlXSwgaGVyb2VzW2VsaWdpYmxlXSldW3NlcV9sZW4odGVhbV9zaXplKV1cbmNhdChcIk9wcG9uZW50OlwiLCBwYXN0ZShvcHBvbmVudCwgY29sbGFwc2UgPSBcIiwgXCIpLCBcIlxcblwiKVxuY2F0KFwiT3B0aW1hbCBjb3VudGVyLXRlYW06XCIsIHBhc3RlKGhlcm9lc1tjaG9zZW5dLCBjb2xsYXBzZSA9IFwiLCBcIiksIFwiXFxuXCIpXG5jYXQoc3ByaW50ZihcIlRvdGFsIG1vZGVsIHNjb3JlOiAlLjJmXFxuXCIsIHN1bShzY29yZXNbY2hvc2VuXSkpKVxuZGF0YS5mcmFtZShIZXJvID0gaGVyb2VzW2Nob3Nlbl0sIENvbnRyaWJ1dGlvbiA9IHJvdW5kKHNjb3Jlc1tjaG9zZW5dLCAyKSkifQ==
+</script>
+</div>
+</div>
+
+
+<script type="webr-data">
+eyJvcHRpb25zIjp7ImJhc2VVcmwiOiJodHRwczovL3dlYnIuci13YXNtLm9yZy92MC42LjAvIn0sInBhY2thZ2VzIjp7InBrZ3MiOlsiZXZhbHVhdGUiLCJrbml0ciIsImh0bWx0b29scyJdLCJyZXBvcyI6W119LCJyZW5kZXJfZGYiOiJkZWZhdWx0In0=
+</script>
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJ3ZWJyLXdpZGdldC0yIiwiaW5saW5lIjpmYWxzZSwibWV0aG9kTmFtZSI6ImludGVycHJldFF1aWV0Iiwic291cmNlIjoie1xuICAvLyBXYWl0IGZvciBvdXRwdXQgdG8gYmUgd3JpdHRlbiB0byB0aGUgRE9NLCB0aGVuIHRyaWdnZXIgd2lkZ2V0IHJlbmRlcmluZ1xuICBhd2FpdCBfd2Vicl92YWx1ZV8yO1xuICBpZiAod2luZG93LkhUTUxXaWRnZXRzKSB7XG4gICAgd2luZG93LkhUTUxXaWRnZXRzLnN0YXRpY1JlbmRlcigpO1xuICB9XG4gIGlmICh3aW5kb3cuUGFnZWRUYWJsZURvYykge1xuICAgIHdpbmRvdy5QYWdlZFRhYmxlRG9jLmluaXRBbGwoKTtcbiAgfVxufVxuIn0seyJjZWxsTmFtZSI6IndlYnItMiIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJzb3VyY2UiOiJ2aWV3b2YgX3dlYnJfZWRpdG9yXzIgPSB7XG4gIGNvbnN0IHsgV2ViUkV4ZXJjaXNlRWRpdG9yLCBiNjREZWNvZGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWU7XG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwid2Vici0yLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHdlYnItMi1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBXZWJSRXhlcmNpc2VFZGl0b3Iod2ViUk9qcy53ZWJSUHJvbWlzZSwgYmxvY2suY29kZSwgb3B0aW9ucyk7XG5cbiAgcmV0dXJuIGVkaXRvci5jb250YWluZXI7XG59XG5fd2Vicl92YWx1ZV8yID0gd2ViUk9qcy5wcm9jZXNzKF93ZWJyX2VkaXRvcl8yLCB7fSk7XG4ifSx7ImNlbGxOYW1lIjoid2Vici13aWRnZXQtMSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IntcbiAgLy8gV2FpdCBmb3Igb3V0cHV0IHRvIGJlIHdyaXR0ZW4gdG8gdGhlIERPTSwgdGhlbiB0cmlnZ2VyIHdpZGdldCByZW5kZXJpbmdcbiAgYXdhaXQgX3dlYnJfdmFsdWVfMTtcbiAgaWYgKHdpbmRvdy5IVE1MV2lkZ2V0cykge1xuICAgIHdpbmRvdy5IVE1MV2lkZ2V0cy5zdGF0aWNSZW5kZXIoKTtcbiAgfVxuICBpZiAod2luZG93LlBhZ2VkVGFibGVEb2MpIHtcbiAgICB3aW5kb3cuUGFnZWRUYWJsZURvYy5pbml0QWxsKCk7XG4gIH1cbn1cbiJ9LHsiY2VsbE5hbWUiOiJ3ZWJyLTEiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF93ZWJyX2VkaXRvcl8xID0ge1xuICBjb25zdCB7IFdlYlJFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuICBjb25zdCBzY3JpcHRDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcIndlYnItMS1jb250ZW50c1xcXCJdYCkudGV4dENvbnRlbnQ7XG4gIGNvbnN0IGJsb2NrID0gSlNPTi5wYXJzZShiNjREZWNvZGUoc2NyaXB0Q29udGVudCkpO1xuXG4gIGNvbnN0IG9wdGlvbnMgPSBPYmplY3QuYXNzaWduKHsgaWQ6IGB3ZWJyLTEtY29udGVudHNgIH0sIGJsb2NrLmF0dHIpO1xuICBjb25zdCBlZGl0b3IgPSBuZXcgV2ViUkV4ZXJjaXNlRWRpdG9yKHdlYlJPanMud2ViUlByb21pc2UsIGJsb2NrLmNvZGUsIG9wdGlvbnMpO1xuXG4gIHJldHVybiBlZGl0b3IuY29udGFpbmVyO1xufVxuX3dlYnJfdmFsdWVfMSA9IHdlYlJPanMucHJvY2Vzcyhfd2Vicl9lZGl0b3JfMSwge30pO1xuIn0seyJjZWxsTmFtZSI6IndlYnItcHJlbHVkZSIsImlubGluZSI6ZmFsc2UsIm1ldGhvZE5hbWUiOiJpbnRlcnByZXRRdWlldCIsInNvdXJjZSI6IndlYlJPanMgPSB7XG4gIGNvbnN0IHsgV2ViUiwgQ2hhbm5lbFR5cGUgfSA9IHdpbmRvdy5fZXhlcmNpc2Vfb2pzX3J1bnRpbWUuV2ViUjtcbiAgY29uc3Qge1xuICAgIFdlYlJFdmFsdWF0b3IsXG4gICAgV2ViUkVudmlyb25tZW50TWFuYWdlcixcbiAgICBzZXR1cFIsXG4gICAgYjY0RGVjb2RlLFxuICAgIGNvbGxhcHNlUGF0aFxuICB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzdGF0dXNDb250YWluZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcImV4ZXJjaXNlLWxvYWRpbmctc3RhdHVzXCIpO1xuICBjb25zdCBpbmRpY2F0b3JDb250YWluZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcImV4ZXJjaXNlLWxvYWRpbmctaW5kaWNhdG9yXCIpO1xuICBpbmRpY2F0b3JDb250YWluZXIuY2xhc3NMaXN0LnJlbW92ZShcImQtbm9uZVwiKTtcblxuICBsZXQgc3RhdHVzVGV4dCA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoXCJkaXZcIilcbiAgc3RhdHVzVGV4dC5jbGFzc0xpc3QgPSBcImV4ZXJjaXNlLWxvYWRpbmctZGV0YWlsc1wiO1xuICBzdGF0dXNUZXh0ID0gc3RhdHVzQ29udGFpbmVyLmFwcGVuZENoaWxkKHN0YXR1c1RleHQpO1xuICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYEluaXRpYWxpc2VgO1xuXG4gIC8vIEhvaXN0IGluZGljYXRvciBvdXQgZnJvbSBmaW5hbCBzbGlkZSB3aGVuIHJ1bm5pbmcgdW5kZXIgcmV2ZWFsXG4gIGNvbnN0IHJldmVhbFN0YXR1cyA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoXCIucmV2ZWFsIC5leGVyY2lzZS1sb2FkaW5nLWluZGljYXRvclwiKTtcbiAgaWYgKHJldmVhbFN0YXR1cykge1xuICAgIHJldmVhbFN0YXR1cy5yZW1vdmUoKTtcbiAgICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKFwiLnJldmVhbCA+IC5zbGlkZXNcIikuYXBwZW5kQ2hpbGQocmV2ZWFsU3RhdHVzKTtcbiAgfVxuXG4gIC8vIE1ha2UgYW55IHJldmVhbCBzbGlkZXMgd2l0aCBsaXZlIGNlbGxzIHNjcm9sbGFibGVcbiAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbChcIi5yZXZlYWwgLmV4ZXJjaXNlLWNlbGxcIikuZm9yRWFjaCgoZWwpID0+IHtcbiAgICBlbC5jbG9zZXN0KCdzZWN0aW9uLnNsaWRlJykuY2xhc3NMaXN0LmFkZChcInNjcm9sbGFibGVcIik7XG4gIH0pXG5cbiAgLy8gd2ViUiBzdXBwbGVtZW50YWwgZGF0YSBhbmQgb3B0aW9uc1xuICBjb25zdCBkYXRhQ29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJ3ZWJyLWRhdGFcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBkYXRhID0gSlNPTi5wYXJzZShiNjREZWNvZGUoZGF0YUNvbnRlbnQpKTtcblxuICAvLyBHcmFiIGxpc3Qgb2YgcmVzb3VyY2VzIHRvIGJlIGRvd25sb2FkZWRcbiAgY29uc3QgZmlsZXNDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInZmcy1maWxlXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgZmlsZXMgPSBKU09OLnBhcnNlKGI2NERlY29kZShmaWxlc0NvbnRlbnQpKTtcblxuICAvLyBJbml0aWFsaXNlIHdlYlIgYW5kIHNldHVwIGZvciBSIGNvZGUgZXZhbHVhdGlvblxuICBsZXQgd2ViUlByb21pc2UgPSAoYXN5bmMgKHdlYlIpID0+IHtcbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIHdlYlJgO1xuICAgIGF3YWl0IHdlYlIuaW5pdCgpO1xuXG4gICAgLy8gSW5zdGFsbCBwcm92aWRlZCBsaXN0IG9mIHBhY2thZ2VzXG4gICAgLy8gRW5zdXJlIHdlYlIgZGVmYXVsdCByZXBvIGlzIGluY2x1ZGVkXG4gICAgZGF0YS5wYWNrYWdlcy5yZXBvcy5wdXNoKFwiaHR0cHM6Ly9yZXBvLnItd2FzbS5vcmdcIilcbiAgICBhd2FpdCBkYXRhLnBhY2thZ2VzLnBrZ3MubWFwKChwa2cpID0+ICgpID0+IHtcbiAgICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcGFja2FnZTogJHtwa2d9YDtcbiAgICAgIHJldHVybiB3ZWJSLmV2YWxSVm9pZChgXG4gICAgICAgIHdlYnI6Omluc3RhbGwocGtnLCByZXBvcyA9IHJlcG9zKVxuICAgICAgICBsaWJyYXJ5KHBrZywgY2hhcmFjdGVyLm9ubHkgPSBUUlVFKVxuICAgICAgYCwgeyBlbnY6IHtcbiAgICAgICAgcGtnOiBwa2csXG4gICAgICAgIHJlcG9zOiBkYXRhLnBhY2thZ2VzLnJlcG9zLFxuICAgICAgfX0pO1xuICAgIH0pLnJlZHVjZSgoY3VyLCBuZXh0KSA9PiBjdXIudGhlbihuZXh0KSwgUHJvbWlzZS5yZXNvbHZlKCkpO1xuXG4gICAgLy8gRG93bmxvYWQgYW5kIGluc3RhbGwgcmVzb3VyY2VzXG4gICAgYXdhaXQgZmlsZXMubWFwKChmaWxlKSA9PiBhc3luYyAoKSA9PiB7XG4gICAgICBjb25zdCBuYW1lID0gZmlsZS5zdWJzdHJpbmcoZmlsZS5sYXN0SW5kZXhPZignLycpICsgMSk7XG4gICAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYERvd25sb2FkaW5nIHJlc291cmNlOiAke25hbWV9YDtcbiAgICAgIGNvbnN0IHJlc3BvbnNlID0gYXdhaXQgZmV0Y2goZmlsZSk7XG4gICAgICBpZiAoIXJlc3BvbnNlLm9rKSB7XG4gICAgICAgIHRocm93IG5ldyBFcnJvcihgQ2FuJ3QgZG93bmxvYWQgXFxgJHtmaWxlfVxcYC4gRXJyb3IgJHtyZXNwb25zZS5zdGF0dXN9OiBcIiR7cmVzcG9uc2Uuc3RhdHVzVGV4dH1cIi5gKTtcbiAgICAgIH1cbiAgICAgIGNvbnN0IGRhdGEgPSBhd2FpdCByZXNwb25zZS5hcnJheUJ1ZmZlcigpO1xuXG4gICAgICAvLyBTdG9yZSBVUkxzIGluIHRoZSBjd2Qgd2l0aG91dCBhbnkgc3ViZGlyZWN0b3J5IHN0cnVjdHVyZVxuICAgICAgaWYgKGZpbGUuaW5jbHVkZXMoXCI6Ly9cIikpIHtcbiAgICAgICAgZmlsZSA9IG5hbWU7XG4gICAgICB9XG5cbiAgICAgIC8vIENvbGxhcHNlIGhpZ2hlciBkaXJlY3Rvcnkgc3RydWN0dXJlXG4gICAgICBmaWxlID0gY29sbGFwc2VQYXRoKGZpbGUpO1xuXG4gICAgICAvLyBDcmVhdGUgZGlyZWN0b3J5IHRyZWUsIGlnbm9yaW5nIFwiZGlyZWN0b3J5IGV4aXN0c1wiIFZGUyBlcnJvcnNcbiAgICAgIGNvbnN0IHBhcnRzID0gZmlsZS5zcGxpdCgnLycpLnNsaWNlKDAsIC0xKTtcbiAgICAgIGxldCBwYXRoID0gJyc7XG4gICAgICB3aGlsZSAocGFydHMubGVuZ3RoID4gMCkge1xuICAgICAgICBwYXRoICs9IHBhcnRzLnNoaWZ0KCkgKyAnLyc7XG4gICAgICAgIGNvbnN0IGFuYWx5c2lzID0gYXdhaXQgd2ViUi5GUy5hbmFseXplUGF0aChwYXRoKTtcbiAgICAgICAgaWYgKCFhbmFseXNpcy5leGlzdHMpIHtcbiAgICAgICAgICB0cnkge1xuICAgICAgICAgICAgYXdhaXQgd2ViUi5GUy5ta2RpcihwYXRoKTtcbiAgICAgICAgICB9IGNhdGNoIChlKSB7XG4gICAgICAgICAgICB0aHJvdyBuZXcgRXJyb3IoYEZpbGVzeXN0ZW0gRXJyb3I6IFwiJHtlLm1lc3NhZ2V9XCIuYCk7XG4gICAgICAgICAgfVxuICAgICAgICB9XG4gICAgICB9XG5cbiAgICAgIC8vIFdyaXRlIHRoaXMgZmlsZSB0byB0aGUgVkZTXG4gICAgICByZXR1cm4gYXdhaXQgd2ViUi5GUy53cml0ZUZpbGUoZmlsZSwgbmV3IFVpbnQ4QXJyYXkoZGF0YSkpO1xuICAgIH0pLnJlZHVjZSgoY3VyLCBuZXh0KSA9PiBjdXIudGhlbihuZXh0KSwgUHJvbWlzZS5yZXNvbHZlKCkpO1xuXG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBJbnN0YWxsaW5nIHdlYlIgc2hpbXNgO1xuICAgIGF3YWl0IHdlYlIuZXZhbFJWb2lkKGB3ZWJyOjpzaGltX2luc3RhbGwoKWApO1xuXG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBXZWJSIGVudmlyb25tZW50IHNldHVwYDtcbiAgICBhd2FpdCBzZXR1cFIod2ViUiwgZGF0YSk7XG5cbiAgICBzdGF0dXNUZXh0LnJlbW92ZSgpO1xuICAgIGlmIChzdGF0dXNDb250YWluZXIuY2hpbGRyZW4ubGVuZ3RoID09IDApIHtcbiAgICAgIHN0YXR1c0NvbnRhaW5lci5wYXJlbnROb2RlLnJlbW92ZSgpO1xuICAgIH1cbiAgICByZXR1cm4gd2ViUjtcbiAgfSkobmV3IFdlYlIoZGF0YS5vcHRpb25zKSk7XG5cbiAgLy8gS2VlcCB0cmFjayBvZiBpbml0aWFsIE9KUyBibG9jayByZW5kZXJcbiAgY29uc3QgcmVuZGVyZWRPanMgPSB7fTtcblxuICBjb25zdCBwcm9jZXNzID0gYXN5bmMgKGNvbnRleHQsIGlucHV0cykgPT4ge1xuICAgIGNvbnN0IHdlYlIgPSBhd2FpdCB3ZWJSUHJvbWlzZTtcbiAgICBjb25zdCBldmFsdWF0b3IgPSBuZXcgV2ViUkV2YWx1YXRvcih3ZWJSLCBjb250ZXh0KVxuICAgIGF3YWl0IGV2YWx1YXRvci5wcm9jZXNzKGlucHV0cyk7XG4gICAgcmV0dXJuIGV2YWx1YXRvci5jb250YWluZXI7XG4gIH1cblxuICByZXR1cm4ge1xuICAgIHByb2Nlc3MsXG4gICAgd2ViUlByb21pc2UsXG4gICAgcmVuZGVyZWRPanMsXG4gIH07XG59XG4ifV19
+</script>
+<div id="exercise-loading-indicator" class="exercise-loading-indicator d-none d-flex align-items-center gap-2">
+<div id="exercise-loading-status" class="d-flex gap-2">
+
+</div>
+<div class="spinner-grow spinner-grow-sm">
+
+</div>
+</div>
+<script type="vfs-file">
+WyJodHRwczovL3Jhdy5naXRodWJ1c2VyY29udGVudC5jb20vTWlzU2hlbmFuaWdhbnMvT3B0aW1hbF9SaXZhbHJ5L21haW4vTWFydmVsUml2YWxzX1dpblJhdGVfTWF0cml4LmNzdiIsImh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9NaXNTaGVuYW5pZ2Fucy9PcHRpbWFsX1JpdmFscnkvbWFpbi9NYXJ2ZWxSaXZhbHNfTnVtTWF0Y2hlc19NYXRyaXguY3N2Il0=
+</script>
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W119
+</script>
+<script type="module">
+if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
+window._ojs.paths.runtimeToDoc = "../../posts/optimal_rivalry_r_demo";
+window._ojs.paths.runtimeToRoot = "../..";
+window._ojs.paths.docToRoot = "../..";
+window._ojs.selfContained = false;
+window._ojs.runtime.interpretFromScriptTags();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
