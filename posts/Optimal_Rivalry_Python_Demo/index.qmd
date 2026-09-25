@@ -2,7 +2,23 @@
 title: "Optimal_Rivalry Python Demo"
 author: Mishenanigans
 date: 2026-09-23
+filters:
+  - live
+ojs-engine: true
+pyodide:
+  engine-url: https://cdn.jsdelivr.net/pyodide/v0.28.1/full/
+  packages:
+    - numpy
+    - pandas
+    - scipy
+    - matplotlib
+    - cvxpy-base
+  cell-options:
+    autorun: false
+    max-lines: 20
+    timelimit: 90
 ---
+
 
 # Marvel Rivals Team Optimization
 
@@ -18,11 +34,13 @@ import cvxpy as cp
 import nashpy as nash
 import pulp
 import math as math
+import random
 from scipy.optimize import linprog
 from itertools import combinations
 from scipy.stats import gaussian_kde
 import matplotlib.pyplot as plt
 ```
+
 
 ## Data Collection
 
@@ -61,7 +79,8 @@ Payoff_df = pd.DataFrame(payoff_values, index=WinRate_df.index, columns=WinRate_
 ```
 
 
-The Payoff Matrix is a normalized to be normally distributed with a mean of 0 and a standard deviation of 1. The normalization is done to ensure that the optimization problem is well-defined and to avoid numerical instability. The Payoff Matrix will be used to find the optimal strategy for each player in the game. The KDE should look like a bell curve with the peak at the mean of 0 and the tails extending in both directions:
+
+The Payoff Matrix is a normalized to be normally distributed with a mean of 0 and distributed between -1 and 1. The normalization is done to ensure that the optimization problem is well-defined and to avoid numerical instability. The Payoff Matrix will be used to find the optimal strategy for each player in the game. The KDE should look like a bell curve with the peak at the mean of 0 and the tails extending in both directions:
 
 ```{python}
 # Display the normalized KDE:
@@ -81,6 +100,7 @@ ax.legend()
 
 plt.show()
 ```
+
 
 ## Introduction to the Problem
 
@@ -144,6 +164,7 @@ RandomTeam = ["Magneto", "Doctor Strange", "The Punisher", "Scarlet Witch", "Clo
 TankHealder = ["Thor", "Angela", "Loki", "Rogue", "Gambit", "Magneto"]
 ```
 
+
 For example, if an opponent team consists the Avengers, and our team consists of the X-Men, the outcome of the utility function $x^\top A y$ will be the total matchup score of our team against the opponent's team. The goal is to find the optimal selection of heroes for our team that maximizes this score.
 
 ```{python}
@@ -152,6 +173,7 @@ columnPlayer = team_to_vector(Avengers)
 result = rowPlayer.T @ payoff_matrix @ columnPlayer
 result
 ```
+
 
 3.02 is a positive score, which means that the X-Men team is expected to have an advantage over the Avengers team in a matchup. The higher the score, the better our team's performance against the opponent's team.
 
@@ -192,6 +214,7 @@ def base_optimal_counter_info(opponent_team):
     return x.value
 ```
 
+
 When the opponent team is the Avengers, the optimal team selection is:
 
 ```{python}
@@ -200,6 +223,7 @@ y = team_to_vector(OpponentTeam)
 print("Best Conter to the Avengers is:")
 OpponentTeamConter = base_optimal_counter_info(y)
 ```
+
 
 ## Optimal Solution to Von Neumann Min Max Equation
 
@@ -215,7 +239,7 @@ $$
 \max_{\mathbf{x}} \ \min_{\mathbf{y}} \ \mathbf{x}^T A \mathbf{y}
 $$
 
-- `x` is our strategy (a 6-hero team, encoded as a binary vector of length 37)
+- `x` is our strategy (a 6-hero team, encoded as a binary vector of length 56)
 - `y` is the opponent’s strategy (also a 6-hero team)
 - The game is **zero-sum**, meaning if we gain, the opponent loses equally.
 
@@ -229,52 +253,147 @@ This equation models the idea:
 Unlike the base counter strategy (which assumes the opponent team is known), this problem assumes **we don’t know the opponent's team**, and instead optimize for the **safest possible team**, one that performs reliably across the board. This is especially useful for a team of new players who has no idea about the game.
 
 ### Implementation
-And it turns out, the solution to the Min Max Question can be found relatively using greedy descent optimization.
+And it turns out, the solution to the Min Max Question can be found relatively using sum_smallest() from CVXPY.
 
 ```{python}
-def min_max_solution_greedy(payoff_matrix):
-    current_team = np.zeros(n, dtype=int)
-    current_team[:6] = 1
+def optimal_maximin_team(payoff_matrix, hero_list):
+    A = np.asarray(payoff_matrix, dtype=float)
+    team_size = 6
+    x = cp.Variable(A.shape[0], boolean=True)
 
-    improvement = True
-    while improvement:
-        opponent = base_optimal_counter(current_team)
-        opponent = np.round(opponent)
+    worst_case_score = cp.sum_smallest(A.T @ x, team_size)
 
-        current_score = current_team.T @ payoff_matrix @ opponent
+    problem = cp.Problem(
+        cp.Maximize(worst_case_score),
+        [cp.sum(x) == team_size],
+    )
 
-        improvement = False
-        best_swap_score = current_score
-        best_team = current_team.copy()
+    problem.solve(
+        solver=cp.HIGHS,
+        mip_rel_gap=0.0,
+        mip_abs_gap=0.0,
+    )
 
-        current_indices = np.where(current_team == 1)[0]
-        remaining_indices = np.where(current_team == 0)[0]
+    if problem.status != cp.OPTIMAL:
+        raise RuntimeError(
+            f"Global optimality was not confirmed: {problem.status}"
+        )
 
-        for out_hero in current_indices:
-            for in_hero in remaining_indices:
-                temp_team = current_team.copy()
-                temp_team[out_hero] = 0
-                temp_team[in_hero] = 1
+    selected = (x.value > 0.5).astype(int)
 
-                temp_score = temp_team.T @ payoff_matrix @ base_optimal_counter(temp_team)
+    opponent_scores = A.T @ selected
+    opponent_indices = np.argsort(opponent_scores)[:team_size]
 
-                if temp_score > best_swap_score:
-                    best_swap_score = temp_score
-                    best_team = temp_team.copy()
-                    improvement = True
+    print("Optimal team:",
+          [hero_list[i] for i in np.flatnonzero(selected)])
+    print("Worst-case opponent:",
+          [hero_list[i] for i in opponent_indices])
+    print("Guaranteed model score:",
+          round(float(opponent_scores[opponent_indices].sum()), 4))
 
-        current_team = best_team
-
-    best_value = current_team.T @ payoff_matrix @ base_optimal_counter(current_team)
-    print(f"Row-player guaranteed payoff is greater than: {best_value:.2f}")
-    BestTeam = vector_to_team(current_team)
-    print("Von Neumann MinMax Best team according to greedy descent strategy is:", ', '.join(BestTeam))
-    return current_team
+    return selected
 ```
 
 ```{python}
-OptimalVector = min_max_solution_greedy(payoff_matrix)
+OptimalVector = optimal_maximin_team(payoff_matrix, hero_list)
 ```
+
 
 ## Conclusion
 With the solution to the min max problem found, we conclude this demonstration of how classical optimization in Von Neumann's game theory can be applied to modern video games. Note that the solution might change as the game is to have future updates and new characters are added to the game. The solution is also dependent on the accuracy of the payoff matrix, which is based on historical data and may not reflect future matchups.
+
+## Try it yourself {#try-it-yourself}
+
+Edit the Python code below and click **Run Code** to explore the model. First run
+**Load the matchup data**, then try any of the three experiments. The first visit
+may take a little while to load Python and its packages; an internet connection
+is needed to load the data. Your edits affect your browser session only.
+
+Use **Start Over** on a code block to restore its original code. To reset all
+variables as well, reload the page and run the data-loading block again.
+
+### Load the matchup data
+
+This loads the same source matrices used above and recreates the payoff matrix.
+The list of hero names in the output is available for copying into your teams.
+
+```{pyodide}
+#| label: playground-data
+#| caption: "Load the matchup data — run this first"
+
+from io import StringIO
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.stats import gaussian_kde
+from pyodide.http import pyfetch
+
+base_url = "https://raw.githubusercontent.com/MisShenanigans/Optimal_Rivalry/main/"
+
+async def load_matrix(filename):
+    response = await pyfetch(base_url + filename)
+    if not response.ok:
+        raise RuntimeError(f"Could not load {filename}: HTTP {response.status}")
+    return pd.read_csv(StringIO(await response.string()), index_col=0)
+
+rates_df = await load_matrix("MarvelRivals_WinRate_Matrix.csv")
+counts_df = await load_matrix("MarvelRivals_NumMatches_Matrix.csv")
+heroes = rates_df.index.tolist()
+rates_df = rates_df.loc[heroes, heroes]
+counts_df = counts_df.loc[heroes, heroes]
+rates = rates_df.to_numpy(dtype=float).ravel()
+weights = counts_df.to_numpy(dtype=float).ravel()
+if not (np.isfinite(rates).all() and np.isfinite(weights).all()
+        and (weights > 0).all() and ((rates >= 0) & (rates <= 100)).all()):
+    raise ValueError("The source matrices contain invalid win rates or match counts.")
+
+density = gaussian_kde(rates, weights=weights)
+low, high = rates.min(), rates.max()
+mass = density.integrate_box_1d(low, high)
+utility = {r: round(2 * density.integrate_box_1d(low, r) / mass - 1, 2)
+           for r in np.unique(rates)}
+A = np.array([utility[r] for r in rates]).reshape(rates_df.shape)
+
+print(f"Ready: {len(heroes)} heroes. Run an experiment below.")
+print("Available heroes:\n" + ", ".join(heroes))
+```
+
+
+### Find a counter-team
+
+Change the six names in `opponent` and run the code. You can also exclude heroes
+from **your own** selection with `unavailable`. With no role or synergy constraints,
+selecting the six highest individual contributions gives the exact best response
+to the fixed opponent team.
+
+```{pyodide}
+#| label: playground-counter
+#| caption: "Change the opponent and find a counter-team"
+
+opponent = ["Black Widow", "Iron Man", "Thor", "Hulk", "Hawkeye", "Captain America"]
+unavailable = []  # Try ["Loki", "Mantis"]
+team_size = 6
+
+if "A" not in globals():
+    raise ValueError("Run 'Load the matchup data' first.")
+if not isinstance(team_size, int) or not 1 <= team_size <= len(heroes):
+    raise ValueError("team_size must be an integer between 1 and the number of heroes.")
+unknown = (set(opponent) | set(unavailable)) - set(heroes)
+if unknown:
+    raise ValueError(f"Unknown hero names: {sorted(unknown)}")
+if len(opponent) != team_size or len(set(opponent)) != team_size:
+    raise ValueError(f"Choose exactly {team_size} distinct opponent heroes.")
+
+y = np.array([int(hero in opponent) for hero in heroes])
+scores = A @ y
+eligible = [i for i, hero in enumerate(heroes) if hero not in unavailable]
+if len(eligible) < team_size:
+    raise ValueError("Not enough heroes are available to form a team.")
+chosen = sorted(eligible, key=lambda i: (-scores[i], heroes[i]))[:team_size]
+
+print("Opponent:", ", ".join(opponent))
+print("Optimal counter-team:", ", ".join(heroes[i] for i in chosen))
+print(f"Total model score: {scores[chosen].sum():.2f}")
+pd.DataFrame({"Selected hero": [heroes[i] for i in chosen],
+              "Score contribution": np.round(scores[chosen], 2)})
+```
