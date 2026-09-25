@@ -52,6 +52,8 @@ This project will mostly be using two dataset from the GitHub repository [Optima
 From there we will construct a Payoff Matrix using a Gaussian Kernel Density Estimation technique to estimate the win rates between each pair of characters. The Payoff Matrix will be the basis of a classical optimization problem in Von Neumann's game theory.
 
 ```{python}
+#| message: false
+#| warning: false
 # Load Data
 NumMatches_df = pd.read_csv("https://raw.githubusercontent.com/MisShenanigans/Optimal_Rivalry/main/MarvelRivals_NumMatches_Matrix.csv", index_col=0)
 WinRate_df = pd.read_csv("https://raw.githubusercontent.com/MisShenanigans/Optimal_Rivalry/main/MarvelRivals_WinRate_Matrix.csv", index_col=0)
