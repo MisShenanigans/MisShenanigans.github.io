@@ -1,6 +1,7 @@
 # MisShenanigans.github.io
 
 Personal website built with Quarto. Rendered pages are written to `docs/`.
+View the website on: https://misshenanigans.github.io/
 
 ## Set up both environments
 
